@@ -1,0 +1,126 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\visual studio\\travel\\DuLichWeb\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|d:\\visual studio\\travel\\dulichweb\\dulichweb\\services\\bookingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|solutionrelative:dulichweb\\services\\bookingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|d:\\visual studio\\travel\\dulichweb\\dulichweb\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|solutionrelative:dulichweb\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|d:\\visual studio\\travel\\dulichweb\\dulichweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|solutionrelative:dulichweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|d:\\visual studio\\travel\\dulichweb\\dulichweb\\services\\tourservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|solutionrelative:dulichweb\\services\\tourservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|d:\\visual studio\\travel\\dulichweb\\dulichweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|solutionrelative:dulichweb\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|d:\\visual studio\\travel\\dulichweb\\dulichweb\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0B5ED422-6E85-AEBF-611F-3CAC68CDB370}|DuLichWeb\\DuLichWeb.csproj|solutionrelative:dulichweb\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 100,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BookingService.cs",
+              "DocumentMoniker": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Services\\BookingService.cs",
+              "RelativeDocumentMoniker": "DuLichWeb\\Services\\BookingService.cs",
+              "ToolTip": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Services\\BookingService.cs",
+              "RelativeToolTip": "DuLichWeb\\Services\\BookingService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-17T17:41:05.552Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ErrorViewModel.cs",
+              "DocumentMoniker": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Models\\ErrorViewModel.cs",
+              "RelativeDocumentMoniker": "DuLichWeb\\Models\\ErrorViewModel.cs",
+              "ToolTip": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Models\\ErrorViewModel.cs",
+              "RelativeToolTip": "DuLichWeb\\Models\\ErrorViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-17T17:33:21.305Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Program.cs",
+              "RelativeDocumentMoniker": "DuLichWeb\\Program.cs",
+              "ToolTip": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Program.cs",
+              "RelativeToolTip": "DuLichWeb\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-17T17:03:33.924Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TourService.cs",
+              "DocumentMoniker": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Services\\TourService.cs",
+              "RelativeDocumentMoniker": "DuLichWeb\\Services\\TourService.cs",
+              "ToolTip": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Services\\TourService.cs",
+              "RelativeToolTip": "DuLichWeb\\Services\\TourService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-17T17:13:21.768Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "DuLichWeb\\Controllers\\HomeController.cs",
+              "ToolTip": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "DuLichWeb\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-17T17:04:24.337Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\appsettings.json",
+              "RelativeDocumentMoniker": "DuLichWeb\\appsettings.json",
+              "ToolTip": "D:\\visual studio\\travel\\DuLichWeb\\DuLichWeb\\appsettings.json",
+              "RelativeToolTip": "DuLichWeb\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-17T16:58:50.938Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
