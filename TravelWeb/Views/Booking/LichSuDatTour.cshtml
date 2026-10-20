@@ -1,0 +1,72 @@
+﻿@model IEnumerable<TravelWeb.Models.DatLich>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Lịch Sử Đặt Tour & Tra Cứu Đơn</h2>
+
+    <!-- Form tra cứu theo mã -->
+    <form method="get" asp-action="LichSuDatTour" class="row g-3 mb-4">
+        <div class="col-md-6">
+            <input type="text" name="maTraCuu" class="form-control" placeholder="Nhập mã tra cứu (Ví dụ: TOUR-20261020-xxxx)...">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-success w-100">Tra Cứu Đơn</button>
+        </div>
+    </form>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Mã Tra Cứu</th>
+                    <th>Tên Tour</th>
+                    <th>Ngày Khởi Hành</th>
+                    <th>Số Khách</th>
+                    <th>Tiền Cọc</th>
+                    <th>Trạng Thái</th>
+                    <th>Thời Gian Đặt</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong class="text-primary">@item.MaTraCuu</strong></td>
+                            <td>@item.DichVu?.TenDichVu</td>
+                            <td>@item.NgayThamQuan.ToString("dd/MM/yyyy")</td>
+                            <td>@item.SoLuongKhach</td>
+                            <td>@item.SoTienCoc.ToString("N0") VNĐ</td>
+                            <td>
+                                @if (item.TrangThaiDat == "CHO_XAC_NHAN")
+                                {
+                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                }
+                                else if (item.TrangThaiDat == "DA_XAC_NHAN")
+                                {
+                                    <span class="badge bg-success">Đã xác nhận</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.TrangThaiDat</span>
+                                }
+                            </td>
+                            <td>@item.ThoiGianTao?.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">Chưa có đơn đặt tour nào trong hệ thống!</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

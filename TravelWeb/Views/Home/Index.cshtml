@@ -1,0 +1,84 @@
+@model IEnumerable<TravelWeb.Models.DichVu>
+@{
+    ViewData["Title"] = "Trang Chủ - Du Lịch";
+}
+
+<div class="container mt-3">
+    <div class="p-4 mb-4 bg-light rounded-3 text-center border">
+        <h1 class="display-5 fw-bold text-primary">Khám Phá Các Tour Du Lịch Tuyệt Vời</h1>
+        <p class="fs-5 text-muted">Đặt tour dễ dàng, thanh toán tiện lợi và trải nghiệm những chuyến đi đáng nhớ!</p>
+    </div>
+
+    <!-- FORM TÌM KIẾM VÀ LỌC -->
+    <form method="get" asp-action="Index" class="row g-3 mb-4">
+        <div class="col-md-5">
+            <input type="text" name="tuKhoa" class="form-control" placeholder="Nhập tên tour hoặc địa điểm..." value="@ViewBag.TuKhoa">
+        </div>
+        <div class="col-md-4">
+            <select name="maDanhMuc" class="form-select">
+                <option value="">-- Tất cả danh mục --</option>
+                @if (ViewBag.DanhMucs != null)
+                {
+                    foreach (var dm in ViewBag.DanhMucs)
+                    {
+                        if (ViewBag.MaDanhMuc == dm.MaDanhMuc)
+                        {
+                            <option value="@dm.MaDanhMuc" selected>@dm.TenDanhMuc</option>
+                        }
+                        else
+                        {
+                            <option value="@dm.MaDanhMuc">@dm.TenDanhMuc</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Tìm kiếm & Lọc</button>
+        </div>
+    </form>
+
+    <!-- HIỂN THỊ DANH SÁCH TOUR -->
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var tour in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/@tour.HinhAnhPhong" class="card-img-top" alt="Ảnh tour" style="height: 200px; object-fit: cover;" onerror="this.src='/images/placeholder.jpg';">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">@tour.TenDichVu</h5>
+                            <p class="card-text text-muted mb-1"><i class="bi bi-geo-alt"></i> @tour.DiaDiem?.TenDiaDiem</p>
+                            <p class="card-text fw-bold text-danger">Giá: @tour.GiaTien.ToString("N0") VNĐ</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a asp-controller="Booking" asp-action="DatTour" asp-route-id="@tour.MaDichVu" class="btn btn-outline-primary w-100">Xem Chi Tiết & Đặt Tour</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-warning text-center">Không tìm thấy tour phù hợp với yêu cầu của bạn!</div>
+            </div>
+        }
+    </div>
+
+    <!-- PHÂN TRANG (PAGINATION) -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { tuKhoa = ViewBag.TuKhoa, maDanhMuc = ViewBag.MaDanhMuc, pageNumber = i })">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
