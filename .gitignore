@@ -1,0 +1,27 @@
+## Visual Studio and .NET .gitignore
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+*.dbmdl
+*.jfm
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store

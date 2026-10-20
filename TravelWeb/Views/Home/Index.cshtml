@@ -1,0 +1,127 @@
+@model IEnumerable<TravelWeb.Models.DichVu>
+@{
+    ViewData["Title"] = "Trang Chủ - Du Lịch";
+}
+
+<div class="container mt-3">
+    <!-- BANNER CHÀO MỪNG & LỐI TẮT VÀO PHÂN HỆ CỦA BÙI TRUNG KIÊN -->
+    <div class="alert alert-primary shadow-sm border-primary d-flex flex-wrap justify-content-between align-items-center mb-4 py-3 px-4">
+        <div>
+            <h5 class="fw-bold mb-1 text-primary"><i class="bi bi-person-badge-fill"></i> Phân Hệ Quản Trị & Nghiệp Vụ (Bùi Trung Kiên)</h5>
+            <p class="mb-0 small text-muted">Truy cập trung tâm điều hành: Quản lý Địa điểm (DL-09), Tour & Số chỗ (DL-13), Xử lý Đơn (DL-19), Đánh giá & Liên hệ (DL-22).</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-primary fw-bold px-4 py-2 mt-2 mt-md-0">
+            <i class="bi bi-speedometer2"></i> MỞ BẢNG ĐIỀU HÀNH QUẢN TRỊ <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="p-4 mb-4 bg-light rounded-3 text-center border">
+        <h1 class="display-5 fw-bold text-primary">Khám Phá Các Tour Du Lịch Tuyệt Vời</h1>
+        <p class="fs-5 text-muted">Đặt tour dễ dàng, thanh toán tiện lợi và trải nghiệm những chuyến đi đáng nhớ!</p>
+    </div>
+
+    <!-- FORM TÌM KIẾM VÀ LỌC -->
+    <form method="get" asp-action="Index" class="row g-3 mb-4">
+        <div class="col-md-5">
+            <input type="text" name="tuKhoa" class="form-control" placeholder="Nhập tên tour hoặc địa điểm..." value="@ViewBag.TuKhoa">
+        </div>
+        <div class="col-md-4">
+            <select name="maDanhMuc" class="form-select">
+                <option value="">-- Tất cả danh mục --</option>
+                @if (ViewBag.DanhMucs != null)
+                {
+                    foreach (var dm in ViewBag.DanhMucs)
+                    {
+                        if (ViewBag.MaDanhMuc == dm.MaDanhMuc)
+                        {
+                            <option value="@dm.MaDanhMuc" selected>@dm.TenDanhMuc</option>
+                        }
+                        else
+                        {
+                            <option value="@dm.MaDanhMuc">@dm.TenDanhMuc</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Tìm kiếm & Lọc</button>
+        </div>
+    </form>
+
+    <!-- HIỂN THỊ DANH SÁCH TOUR -->
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var tour in Model)
+            {
+                string anhSrc = string.IsNullOrEmpty(tour.HinhAnhPhong) ? "/images/dalat.webp" : (tour.HinhAnhPhong.StartsWith("/") ? tour.HinhAnhPhong : "/images/" + tour.HinhAnhPhong);
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0 position-relative">
+                        <img src="@anhSrc" class="card-img-top rounded-top" alt="@tour.TenDichVu" style="height: 210px; object-fit: cover;" onerror="this.src='/images/dalat.webp';">
+                        
+                        <!-- BADGE TRẠNG THÁI & SỐ CHỖ (KIÊN) -->
+                        <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-1">
+                            @if (tour.GiaKhuyenMai.HasValue && tour.GiaKhuyenMai.Value > 0)
+                            {
+                                <span class="badge bg-danger shadow-sm">Ưu đãi -@Math.Round((tour.GiaTien - tour.GiaKhuyenMai.Value) / tour.GiaTien * 100)%</span>
+                            }
+                            @if (tour.SoChoConLai == 0 || tour.TrangThaiTour == "HET_CHO")
+                            {
+                                <span class="badge bg-secondary shadow-sm">Hết chỗ</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success shadow-sm">Còn @tour.SoChoConLai chỗ</span>
+                            }
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title text-primary fw-bold">@tour.TenDichVu</h5>
+                            <p class="card-text text-muted mb-1"><i class="bi bi-geo-alt"></i> @(tour.DiaDiem?.TenDiaDiem ?? "Địa điểm du lịch")</p>
+                            <p class="card-text small text-secondary mb-2"><i class="bi bi-clock"></i> @(tour.ThoiLuong ?? "3 ngày 2 đêm")</p>
+                            
+                            @if (tour.GiaKhuyenMai.HasValue && tour.GiaKhuyenMai.Value > 0)
+                            {
+                                <div>
+                                    <span class="fs-5 fw-bold text-danger">@tour.GiaKhuyenMai.Value.ToString("N0") VNĐ</span>
+                                    <span class="small text-muted text-decoration-line-through ms-2">@tour.GiaTien.ToString("N0") VNĐ</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="card-text fw-bold text-danger fs-5 mb-0">@tour.GiaTien.ToString("N0") VNĐ</p>
+                            }
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pt-0">
+                            <a asp-controller="Booking" asp-action="DatTour" asp-route-id="@tour.MaDichVu" class="btn btn-outline-primary w-100 fw-bold">
+                                <i class="bi bi-calendar-check"></i> Xem Chi Tiết & Đặt Tour
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-warning text-center">Không tìm thấy tour phù hợp với yêu cầu của bạn!</div>
+            </div>
+        }
+    </div>
+
+    <!-- PHÂN TRANG (PAGINATION) -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { tuKhoa = ViewBag.TuKhoa, maDanhMuc = ViewBag.MaDanhMuc, pageNumber = i })">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

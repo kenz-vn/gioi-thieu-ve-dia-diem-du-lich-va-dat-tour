@@ -1,0 +1,235 @@
+@model IEnumerable<TravelWeb.Models.DatLich>
+@{
+    ViewData["Title"] = "Bảng Điều Hành Quản Trị & Nhân Viên";
+    string currentRole = ViewBag.CurrentRole ?? "NHAN_VIEN";
+    string currentUser = ViewBag.CurrentUser ?? "Bùi Trung Kiên (Nhân viên)";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <div>
+        <h2 class="fw-bold text-primary mb-1"><i class="bi bi-speedometer2"></i> Trung Tâm Quản Trị & Điều Hành</h2>
+        <p class="text-muted mb-0">Phân hệ nghiệp vụ & Quản lý vận hành (Phụ trách: <strong>Bùi Trung Kiên - Phân tích nghiệp vụ & Backend quản lý</strong>)</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-secondary p-2"><i class="bi bi-person-badge"></i> @currentUser</span>
+        <form asp-controller="Admin" asp-action="SwitchRole" method="post" class="d-inline-flex gap-1">
+            <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="NHAN_VIEN" selected="@(currentRole == "NHAN_VIEN")">Vai trò: Nhân Viên (Bùi Trung Kiên)</option>
+                <option value="ADMIN" selected="@(currentRole == "ADMIN")">Vai trò: Quản Trị Viên (Admin)</option>
+                <option value="KHACH_HANG" selected="@(currentRole == "KHACH_HANG")">Vai trò: Khách Hàng (Giới hạn quyền)</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- THẺ THỐNG KÊ CÁC PHÂN HỆ CỦA KIÊN -->
+<div class="row g-3 mb-4">
+    <!-- DL-09: Địa điểm -->
+    <div class="col-md-4 col-lg-2">
+        <div class="card h-100 shadow-sm border-0 border-start border-primary border-4">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Địa Điểm (DL-09)</div>
+                <div class="fs-3 fw-bold text-primary my-1">@ViewBag.TongDiaDiem</div>
+                <a asp-controller="AdminDiaDiem" asp-action="Index" class="btn btn-sm btn-outline-primary w-100 mt-2">Quản lý <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DL-13: Tour & Số chỗ -->
+    <div class="col-md-4 col-lg-2">
+        <div class="card h-100 shadow-sm border-0 border-start border-success border-4">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Tour & Số chỗ (DL-13)</div>
+                <div class="fs-3 fw-bold text-success my-1">@ViewBag.TongTour</div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle">@ViewBag.TourDangBan đang bán</span>
+                <a asp-controller="AdminTour" asp-action="Index" class="btn btn-sm btn-outline-success w-100 mt-2">Quản lý <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DL-19: Đơn Chờ Xử Lý -->
+    <div class="col-md-4 col-lg-2">
+        <div class="card h-100 shadow-sm border-0 border-start border-warning border-4">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Xử Lý Đơn (DL-19)</div>
+                <div class="fs-3 fw-bold text-warning my-1">@ViewBag.DonChoXacNhan</div>
+                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Chờ duyệt gấp</span>
+                <a asp-controller="AdminDonDat" asp-action="Index" asp-route-trangThai="CHO_XAC_NHAN" class="btn btn-sm btn-warning w-100 mt-2 text-dark fw-bold">Xử lý ngay <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DL-22: Đánh giá chờ duyệt -->
+    <div class="col-md-4 col-lg-2">
+        <div class="card h-100 shadow-sm border-0 border-start border-danger border-4">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Kiểm Duyệt ĐG (DL-22)</div>
+                <div class="fs-3 fw-bold text-danger my-1">@ViewBag.DanhGiaChoDuyet</div>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Chờ kiểm duyệt</span>
+                <a asp-controller="AdminDanhGia" asp-action="Index" class="btn btn-sm btn-outline-danger w-100 mt-2">Kiểm duyệt <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DL-22: Liên hệ khách hàng -->
+    <div class="col-md-4 col-lg-2">
+        <div class="card h-100 shadow-sm border-0 border-start border-info border-4">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Liên Hệ Khách (DL-22)</div>
+                <div class="fs-3 fw-bold text-info my-1">@ViewBag.LienHeChuaXuLy</div>
+                <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">Cần phản hồi</span>
+                <a asp-controller="AdminLienHe" asp-action="Index" class="btn btn-sm btn-outline-info w-100 mt-2">Phản hồi <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DL-22: Nhà cung cấp -->
+    <div class="col-md-4 col-lg-2">
+        <div class="card h-100 shadow-sm border-0 border-start border-secondary border-4">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase fw-semibold">Nhà Cung Cấp (DL-22)</div>
+                <div class="fs-3 fw-bold text-secondary my-1">@ViewBag.TongNhaCungCap</div>
+                <span class="badge bg-secondary-subtle text-secondary border">Đối tác hợp tác</span>
+                <a asp-controller="AdminNhaCungCap" asp-action="Index" class="btn btn-sm btn-outline-secondary w-100 mt-2">Đối tác <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LỐI TẮT CHỨC NĂNG CỦA KIÊN THEO SPRINT & TIÊU CHÍ NGHIỆM THU -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-light fw-bold py-3">
+        <i class="bi bi-kanban"></i> Phân Công Trách Nhiệm & Chức Năng Của Kiên Trong Dự Án
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-3">
+                <div class="p-3 border rounded bg-light-subtle h-100">
+                    <span class="badge bg-primary mb-2">Sprint 1 / DL-09</span>
+                    <h6 class="fw-bold mb-1">Quản Trị Địa Điểm & Ảnh</h6>
+                    <p class="text-muted small mb-2">Thêm, sửa địa điểm, upload và quản lý thư viện hình ảnh, kiểm tra trường bắt buộc.</p>
+                    <a asp-controller="AdminDiaDiem" asp-action="Index" class="btn btn-sm btn-outline-primary">Mở quản lý địa điểm</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="p-3 border rounded bg-light-subtle h-100">
+                    <span class="badge bg-success mb-2">Sprint 2 / DL-13</span>
+                    <h6 class="fw-bold mb-1">Backend Tour & Số Chỗ</h6>
+                    <p class="text-muted small mb-2">Thêm/sửa/ngừng tour, quản lý lịch trình chi tiết, số chỗ còn lại (chống âm), khuyến mãi.</p>
+                    <a asp-controller="AdminTour" asp-action="Index" class="btn btn-sm btn-outline-success">Mở quản lý tour</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="p-3 border rounded bg-light-subtle h-100">
+                    <span class="badge bg-warning text-dark mb-2">Sprint 3 / DL-19</span>
+                    <h6 class="fw-bold mb-1">Xử Lý Đơn Đặt Tour</h6>
+                    <p class="text-muted small mb-2">Xem danh sách đơn, xác nhận, từ chối bắt buộc có lý do, chuyển trạng thái đúng quy tắc.</p>
+                    <a asp-controller="AdminDonDat" asp-action="Index" class="btn btn-sm btn-outline-warning text-dark">Mở xử lý đơn</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="p-3 border rounded bg-light-subtle h-100">
+                    <span class="badge bg-info text-dark mb-2">Sprint 4 / DL-22</span>
+                    <h6 class="fw-bold mb-1">Đánh Giá, Liên Hệ & NCC</h6>
+                    <p class="text-muted small mb-2">Kiểm duyệt đánh giá (không sửa lời khách), tiếp nhận liên hệ, quản lý thông tin nhà cung cấp.</p>
+                    <div class="d-flex flex-wrap gap-1 mt-1">
+                        <a asp-controller="AdminDanhGia" asp-action="Index" class="btn btn-xs btn-outline-danger">Đánh giá</a>
+                        <a asp-controller="AdminLienHe" asp-action="Index" class="btn btn-xs btn-outline-info">Liên hệ</a>
+                        <a asp-controller="AdminNhaCungCap" asp-action="Index" class="btn btn-xs btn-outline-secondary">Nhà CC</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BẢNG CÁC ĐƠN ĐẶT TOUR MỚI CẦN XỬ LÝ (DL-19) -->
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-clock-history"></i> Đơn Đặt Tour Gần Đây Cần Xử Lý</h5>
+        <a asp-controller="AdminDonDat" asp-action="Index" class="btn btn-sm btn-primary">Xem toàn bộ danh sách (@ViewBag.TongDonDat đơn)</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã Đơn / Mã Tra Cứu</th>
+                    <th>Khách Hàng</th>
+                    <th>Tour Đăng Ký</th>
+                    <th>Số Khách</th>
+                    <th>Tiền Cọc</th>
+                    <th>Trạng Thái</th>
+                    <th>Thời Gian Tạo</th>
+                    <th class="text-end">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var don in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong class="text-primary">@don.MaDatLich</strong>
+                                <div class="small text-muted">@don.MaTraCuu</div>
+                            </td>
+                            <td>
+                                <div><strong>@don.HoTen</strong></div>
+                                <div class="small text-muted"><i class="bi bi-telephone"></i> @don.SoDienthoai</div>
+                            </td>
+                            <td>
+                                @(don.DichVu != null ? don.DichVu.TenDichVu : "N/A")
+                            </td>
+                            <td><span class="badge bg-secondary">@don.SoLuongKhach khách</span></td>
+                            <td><strong>@don.SoTienCoc.ToString("N0") đ</strong></td>
+                            <td>
+                                @if (don.TrangThaiDat == "CHO_XAC_NHAN")
+                                {
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Chờ xác nhận</span>
+                                }
+                                else if (don.TrangThaiDat == "DA_XAC_NHAN")
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đã xác nhận</span>
+                                }
+                                else if (don.TrangThaiDat == "TU_CHOI")
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Bị từ chối</span>
+                                }
+                                else if (don.TrangThaiDat == "HOAN_THANH")
+                                {
+                                    <span class="badge bg-primary"><i class="bi bi-flag"></i> Hoàn thành</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@don.TrangThaiDat</span>
+                                }
+                            </td>
+                            <td class="small text-muted">
+                                @(don.ThoiGianTao.HasValue ? don.ThoiGianTao.Value.ToString("dd/MM/yyyy HH:mm") : "")
+                            </td>
+                            <td class="text-end">
+                                <a asp-controller="AdminDonDat" asp-action="Details" asp-route-id="@don.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil-square"></i> Xử lý
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">Chưa có đơn đặt tour nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

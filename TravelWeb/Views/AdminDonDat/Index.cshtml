@@ -1,0 +1,176 @@
+@model IEnumerable<TravelWeb.Models.DatLich>
+@{
+    ViewData["Title"] = "Xử Lý Đơn Đặt Tour (DL-19)";
+    string currentTab = ViewBag.TrangThai ?? "";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold text-warning-emphasis mb-1"><i class="bi bi-card-checklist"></i> Màn Hình Nhân Viên Xử Lý Đơn Đặt Tour</h2>
+        <span class="badge bg-warning text-dark">Sprint 3 / Task DL-19: Xử Lý Đơn, Xác Nhận & Từ Chối Kèm Lý Do (Kiên)</span>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- TABS LỌC TRẠNG THÁI THEO USER STORY DL-19 -->
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a asp-action="Index" class="btn @(string.IsNullOrEmpty(currentTab) ? "btn-dark" : "btn-outline-dark")">
+        Tất cả đơn <span class="badge bg-secondary ms-1">@ViewBag.CountAll</span>
+    </a>
+    <a asp-action="Index" asp-route-trangThai="CHO_XAC_NHAN" class="btn @(currentTab == "CHO_XAC_NHAN" ? "btn-warning text-dark fw-bold" : "btn-outline-warning text-dark")">
+        <i class="bi bi-hourglass-split"></i> Chờ xác nhận <span class="badge bg-danger ms-1">@ViewBag.CountChoXacNhan</span>
+    </a>
+    <a asp-action="Index" asp-route-trangThai="DA_XAC_NHAN" class="btn @(currentTab == "DA_XAC_NHAN" ? "btn-success" : "btn-outline-success")">
+        <i class="bi bi-check-circle"></i> Đã xác nhận <span class="badge bg-secondary ms-1">@ViewBag.CountDaXacNhan</span>
+    </a>
+    <a asp-action="Index" asp-route-trangThai="TU_CHOI" class="btn @(currentTab == "TU_CHOI" ? "btn-danger" : "btn-outline-danger")">
+        <i class="bi bi-x-circle"></i> Bị từ chối <span class="badge bg-secondary ms-1">@ViewBag.CountTuChoi</span>
+    </a>
+    <a asp-action="Index" asp-route-trangThai="HOAN_THANH" class="btn @(currentTab == "HOAN_THANH" ? "btn-primary" : "btn-outline-primary")">
+        <i class="bi bi-flag"></i> Hoàn thành <span class="badge bg-secondary ms-1">@ViewBag.CountHoanThanh</span>
+    </a>
+    <a asp-action="Index" asp-route-trangThai="DA_HUY" class="btn @(currentTab == "DA_HUY" ? "btn-secondary" : "btn-outline-secondary")">
+        <i class="bi bi-slash-circle"></i> Đã hủy <span class="badge bg-secondary ms-1">@ViewBag.CountDaHuy</span>
+    </a>
+</div>
+
+<!-- THANH TÌM KIẾM VÀ LỌC THỜI GIAN -->
+<div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-center">
+            <input type="hidden" name="trangThai" value="@currentTab" />
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="tuKhoa" class="form-control" placeholder="Tìm theo Mã đơn, Mã tra cứu, Tên khách, SĐT..." value="@ViewBag.TuKhoa" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="tuNgay" class="form-control" value="@ViewBag.TuNgay" title="Từ ngày tạo" />
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="denNgay" class="form-control" value="@ViewBag.DenNgay" title="Đến ngày tạo" />
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-warning w-100 text-dark"><i class="bi bi-funnel"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- BẢNG DANH SÁCH ĐƠN ĐẶT TOUR -->
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã Đơn / Mã Tra Cứu</th>
+                    <th>Thông Tin Khách Hàng</th>
+                    <th>Tour Đăng Ký</th>
+                    <th>Ngày Đi / Số Khách</th>
+                    <th>Tiền Cọc</th>
+                    <th>Trạng Thái Đơn</th>
+                    <th>Xử Lý Bởi</th>
+                    <th class="text-end">Chi Tiết</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr class="@(item.TrangThaiDat == "CHO_XAC_NHAN" ? "table-warning bg-opacity-25" : "")">
+                            <td>
+                                <strong class="text-primary fs-6">@item.MaDatLich</strong>
+                                <div class="small text-muted"><i class="bi bi-qr-code"></i> @item.MaTraCuu</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold">@item.HoTen</div>
+                                <div class="small text-muted"><i class="bi bi-telephone"></i> @item.SoDienthoai</div>
+                                <div class="small text-muted"><i class="bi bi-envelope"></i> @item.Email</div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@(item.DichVu != null ? item.DichVu.TenDichVu : "N/A")</div>
+                                <div class="small text-muted"><i class="bi bi-geo-alt"></i> @(item.DichVu?.DiaDiem?.TenDiaDiem ?? "")</div>
+                            </td>
+                            <td>
+                                <div><i class="bi bi-calendar-event"></i> @item.NgayThamQuan.ToString("dd/MM/yyyy")</div>
+                                <span class="badge bg-secondary">@item.SoLuongKhach khách</span>
+                            </td>
+                            <td>
+                                <strong class="text-danger">@item.SoTienCoc.ToString("N0") đ</strong>
+                            </td>
+                            <td>
+                                @if (item.TrangThaiDat == "CHO_XAC_NHAN")
+                                {
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Chờ xác nhận</span>
+                                }
+                                else if (item.TrangThaiDat == "DA_XAC_NHAN")
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đã xác nhận</span>
+                                }
+                                else if (item.TrangThaiDat == "TU_CHOI")
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Bị từ chối</span>
+                                    @if (!string.IsNullOrEmpty(item.LyDoTuChoi))
+                                    {
+                                        <div class="small text-danger text-truncate" style="max-width: 150px;" title="@item.LyDoTuChoi">
+                                            Lý do: @item.LyDoTuChoi
+                                        </div>
+                                    }
+                                }
+                                else if (item.TrangThaiDat == "HOAN_THANH")
+                                {
+                                    <span class="badge bg-primary"><i class="bi bi-flag"></i> Hoàn thành</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.TrangThaiDat</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.NguoiXuLy))
+                                {
+                                    <div class="small fw-semibold text-dark"><i class="bi bi-person-check"></i> @item.NguoiXuLy</div>
+                                    <div class="small text-muted">@(item.ThoiGianXuLy?.ToString("dd/MM HH:mm") ?? "")</div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">-- Chưa xử lý --</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary fw-bold">
+                                    <i class="bi bi-pencil-square"></i> Xử lý
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i> Không có đơn đặt tour nào trong danh mục này.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

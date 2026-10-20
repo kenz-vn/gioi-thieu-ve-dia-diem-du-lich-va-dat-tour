@@ -1,0 +1,126 @@
+@model TravelWeb.Models.DiaDiem
+@{
+    ViewData["Title"] = "Chỉnh Sửa Địa Điểm: " + Model.TenDiaDiem;
+    var availableImages = ViewBag.AvailableImages as List<string> ?? new List<string>();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="fw-bold text-primary mb-1"><i class="bi bi-pencil-square"></i> Chỉnh Sửa Địa Điểm Du Lịch</h3>
+                <span class="badge bg-primary">Task DL-09: Quản trị Địa Điểm & Hình Ảnh (Kiên)</span>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="MaDiaDiem" />
+                    <input type="hidden" asp-for="HinhAnh" />
+                    <input type="hidden" asp-for="MaChuSoHuu" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label asp-for="TenDiaDiem" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
+                            <input asp-for="TenDiaDiem" class="form-control" />
+                            <span asp-validation-for="TenDiaDiem" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="MaDanhMuc" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
+                            <select asp-for="MaDanhMuc" class="form-select" asp-items="ViewBag.DanhMucs"></select>
+                            <span asp-validation-for="MaDanhMuc" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label asp-for="DiaChi" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
+                            <input asp-for="DiaChi" class="form-control" />
+                            <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Hotline" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="Hotline" class="form-control" />
+                            <span asp-validation-for="Hotline" class="text-danger small"></span>
+                        </div>
+
+                        <!-- QUẢN LÝ HÌNH ẢNH -->
+                        <div class="col-12">
+                            <div class="card bg-light border p-3">
+                                <h6 class="fw-bold text-primary mb-2"><i class="bi bi-images"></i> Quản Lý Hình Ảnh Hiện Tại</h6>
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 text-center">
+                                        @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                                        {
+                                            <img src="~/images/@Model.HinhAnh" class="img-thumbnail shadow-sm mb-2" style="max-height: 120px; object-fit: cover;" alt="@Model.TenDiaDiem" onerror="this.src='/images/dalat.webp';" />
+                                            <div class="small text-muted">@Model.HinhAnh</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="border rounded p-3 text-muted">Chưa có ảnh</div>
+                                        }
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-2">
+                                            <label class="form-label small fw-bold">Tải lên hình ảnh mới thay thế:</label>
+                                            <input type="file" name="fileAnh" class="form-control" accept="image/*" />
+                                        </div>
+                                        <div>
+                                            <label class="form-label small fw-bold">Hoặc chọn ảnh khác từ thư viện:</label>
+                                            <select name="anhCoSan" class="form-select">
+                                                <option value="">-- Giữ nguyên ảnh hiện tại --</option>
+                                                @foreach (var img in availableImages)
+                                                {
+                                                    <option value="@img" selected="@(img == Model.HinhAnh)">@img</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="TrangThai" class="form-label fw-bold text-dark"></label>
+                            <select asp-for="TrangThai" class="form-select">
+                                <option value="HOAT_DONG">Hoạt động bình thường</option>
+                                <option value="DONG_CUA">Tạm đóng cửa / Ngừng đón khách</option>
+                                <option value="BAO_TRI">Đang bảo trì / Nâng cấp</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NoiCanToi" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="NoiCanToi" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="VanHoa" class="form-label fw-bold text-dark"></label>
+                            <textarea asp-for="VanHoa" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DoAn" class="form-label fw-bold text-dark"></label>
+                            <textarea asp-for="DoAn" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                <i class="bi bi-save"></i> Cập Nhật Thay Đổi
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

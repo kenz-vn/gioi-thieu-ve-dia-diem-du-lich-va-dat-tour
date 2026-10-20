@@ -1,0 +1,140 @@
+@model TravelWeb.Models.DichVu
+@{
+    ViewData["Title"] = "Chỉnh Sửa Tour: " + Model.TenDichVu;
+    var availableImages = ViewBag.AvailableImages as List<string> ?? new List<string>();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="fw-bold text-success mb-1"><i class="bi bi-pencil-square"></i> Chỉnh Sửa Tour Du Lịch</h3>
+                <span class="badge bg-success">Task DL-13: Backend Tour, Lịch Trình, Số Chỗ & Khuyến Mãi (Kiên)</span>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="MaDichVu" />
+                    <input type="hidden" asp-for="HinhAnhPhong" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label asp-for="TenDichVu" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <input asp-for="TenDichVu" class="form-control" />
+                            <span asp-validation-for="TenDichVu" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="MaDiaDiem" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <select asp-for="MaDiaDiem" class="form-select" asp-items="ViewBag.DiaDiems"></select>
+                            <span asp-validation-for="MaDiaDiem" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="GiaTien" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <div class="input-group">
+                                <input asp-for="GiaTien" class="form-control" type="number" step="10000" min="0" />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="GiaTien" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="GiaKhuyenMai" class="form-label fw-bold text-danger">Giá khuyến mãi (nếu có)</label>
+                            <div class="input-group">
+                                <input asp-for="GiaKhuyenMai" class="form-control" type="number" step="10000" min="0" />
+                                <span class="input-group-text text-danger fw-bold">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="GiaKhuyenMai" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="TyLeCoc" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <div class="input-group">
+                                <input asp-for="TyLeCoc" class="form-control" type="number" min="1" max="100" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="TyLeCoc" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="SoChoToiDa" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <input asp-for="SoChoToiDa" class="form-control" type="number" min="1" />
+                            <span asp-validation-for="SoChoToiDa" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="SoChoConLai" class="form-label fw-bold text-primary"></label> <span class="text-danger">* (Chặn âm)</span>
+                            <input asp-for="SoChoConLai" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="SoChoConLai" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="ThoiLuong" class="form-label fw-bold"></label>
+                            <input asp-for="ThoiLuong" class="form-control" />
+                            <span asp-validation-for="ThoiLuong" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="TrangThaiTour" class="form-label fw-bold"></label>
+                            <select asp-for="TrangThaiTour" class="form-select">
+                                <option value="DANG_BAN">Đang bán (Nhận khách)</option>
+                                <option value="TAM_NGUNG">Tạm ngưng nhận khách</option>
+                                <option value="HET_CHO">Hết chỗ</option>
+                            </select>
+                        </div>
+
+                        <!-- Hình Ảnh Hiện Tại & Cập Nhật -->
+                        <div class="col-md-8">
+                            <div class="card bg-light border p-2">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        @if (!string.IsNullOrEmpty(Model.HinhAnhPhong))
+                                        {
+                                            <img src="~/images/@Model.HinhAnhPhong" class="rounded shadow-sm" style="width: 80px; height: 60px; object-fit: cover;" onerror="this.src='/images/dalat.webp';" />
+                                        }
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label small fw-bold mb-1">Tải ảnh mới hoặc chọn từ thư viện:</label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="file" name="fileAnh" class="form-control" accept="image/*" />
+                                            <select name="anhCoSan" class="form-select">
+                                                <option value="">-- Giữ nguyên ảnh cũ --</option>
+                                                @foreach (var img in availableImages)
+                                                {
+                                                    <option value="@img" selected="@(img == Model.HinhAnhPhong)">@img</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lịch Trình Chi Tiết -->
+                        <div class="col-12">
+                            <label asp-for="LichTrinh" class="form-label fw-bold text-success"><i class="bi bi-calendar2-week"></i> Lịch Trình Chi Tiết Tour</label>
+                            <textarea asp-for="LichTrinh" class="form-control" rows="5"></textarea>
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-success px-4 fw-bold">
+                                <i class="bi bi-save"></i> Cập Nhật Tour
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,184 @@
+@model IEnumerable<TravelWeb.Models.DichVu>
+@{
+    ViewData["Title"] = "Quản Lý Tour & Lịch Trình (DL-13)";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold text-success mb-1"><i class="bi bi-compass-fill"></i> Quản Lý Tour Du Lịch & Lịch Trình</h2>
+        <span class="badge bg-success">Sprint 2 / Task DL-13: Backend Tour, Số Chỗ & Khuyến Mãi (Kiên)</span>
+    </div>
+    <a asp-action="Create" class="btn btn-success fw-bold">
+        <i class="bi bi-plus-circle"></i> Thêm Tour Du Lịch Mới
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- BỘ LỌC TÌM KIẾM TOUR -->
+<div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="tuKhoa" class="form-control" placeholder="Tìm tên tour hoặc địa điểm..." value="@ViewBag.TuKhoa" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="maDiaDiem" class="form-select" asp-items="ViewBag.DiaDiems">
+                    <option value="">-- Tất cả địa điểm --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="DANG_BAN" selected="@(ViewBag.TrangThai == "DANG_BAN")">Đang bán</option>
+                    <option value="TAM_NGUNG" selected="@(ViewBag.TrangThai == "TAM_NGUNG")">Tạm ngưng</option>
+                    <option value="HET_CHO" selected="@(ViewBag.TrangThai == "HET_CHO")">Hết chỗ</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- BẢNG DANH SÁCH TOUR -->
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 90px;">Hình Ảnh</th>
+                    <th>Tên Tour & Lịch Trình</th>
+                    <th>Địa Điểm</th>
+                    <th>Giá Gốc / Khuyến Mãi</th>
+                    <th style="min-width: 170px;">Số Chỗ (Còn / Tối đa)</th>
+                    <th>Trạng Thái</th>
+                    <th class="text-end" style="min-width: 170px;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.HinhAnhPhong))
+                                {
+                                    <img src="~/images/@item.HinhAnhPhong" class="rounded shadow-sm" style="width: 75px; height: 55px; object-fit: cover;" alt="@item.TenDichVu" onerror="this.src='/images/dalat.webp';" />
+                                }
+                                else
+                                {
+                                    <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded" style="width: 75px; height: 55px;">
+                                        <i class="bi bi-compass"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">@item.TenDichVu</div>
+                                <div class="small text-muted"><i class="bi bi-clock"></i> @(item.ThoiLuong ?? "3N2Đ") | Cọc: @item.TyLeCoc%</div>
+                                @if (!string.IsNullOrEmpty(item.LichTrinh))
+                                {
+                                    <div class="small text-secondary text-truncate" style="max-width: 320px;" title="@item.LichTrinh">
+                                        <i class="bi bi-calendar3"></i> @item.LichTrinh
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    @(item.DiaDiem != null ? item.DiaDiem.TenDiaDiem : "N/A")
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.GiaKhuyenMai.HasValue && item.GiaKhuyenMai.Value > 0)
+                                {
+                                    <div>
+                                        <strong class="text-danger">@item.GiaKhuyenMai.Value.ToString("N0") đ</strong>
+                                    </div>
+                                    <div class="small text-muted text-decoration-line-through">@item.GiaTien.ToString("N0") đ</div>
+                                    <span class="badge bg-danger-subtle text-danger small">Giảm @Math.Round((item.GiaTien - item.GiaKhuyenMai.Value) / item.GiaTien * 100)%</span>
+                                }
+                                else
+                                {
+                                    <strong class="text-dark">@item.GiaTien.ToString("N0") đ</strong>
+                                }
+                            </td>
+                            <td>
+                                <!-- CẬP NHẬT NHANH SỐ CHỖ CÒN LẠI (TIÊU CHÍ DL-13: CHỐNG ÂM) -->
+                                <form asp-action="CapNhatSoCho" method="post" class="d-flex align-items-center gap-1">
+                                    <input type="hidden" name="id" value="@item.MaDichVu" />
+                                    <input type="number" name="soChoConLai" value="@item.SoChoConLai" min="0" max="@item.SoChoToiDa" class="form-control form-control-sm text-center fw-bold @(item.SoChoConLai == 0 ? "border-danger text-danger" : "border-success text-success")" style="width: 70px;" />
+                                    <span class="small text-muted">/ @item.SoChoToiDa</span>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary py-0 px-2" title="Lưu số chỗ">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                @if (item.TrangThaiTour == "DANG_BAN")
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check2-circle"></i> Đang bán</span>
+                                }
+                                else if (item.TrangThaiTour == "HET_CHO" || item.SoChoConLai == 0)
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-x-octagon"></i> Hết chỗ</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="bi bi-pause-circle"></i> Tạm ngưng</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Edit" asp-route-id="@item.MaDichVu" class="btn btn-outline-primary" title="Sửa tour & lịch trình">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </a>
+
+                                    <!-- NÚT NGỪNG TOUR / MỞ LẠI TOUR (DL-13) -->
+                                    <form asp-action="ToggleTrangThai" asp-route-id="@item.MaDichVu" method="post" class="d-inline">
+                                        <button type="submit" class="btn @(item.TrangThaiTour == "DANG_BAN" ? "btn-outline-warning" : "btn-outline-success")" title="@(item.TrangThaiTour == "DANG_BAN" ? "Ngừng bán tour này" : "Mở bán lại tour")">
+                                            <i class="bi @(item.TrangThaiTour == "DANG_BAN" ? "bi-pause-fill" : "bi-play-fill")"></i>
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="Delete" asp-route-id="@item.MaDichVu" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tour này không?');">
+                                        <button type="submit" class="btn btn-outline-danger" title="Xóa tour">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i> Chưa có tour du lịch nào phù hợp.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

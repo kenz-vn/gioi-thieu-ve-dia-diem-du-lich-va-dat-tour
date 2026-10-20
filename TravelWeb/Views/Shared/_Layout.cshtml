@@ -1,0 +1,130 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    string currentRole = HttpContextAccessor.HttpContext?.Session?.GetString("CURRENT_ROLE") ?? "NHAN_VIEN";
+    string currentUser = HttpContextAccessor.HttpContext?.Session?.GetString("CURRENT_USER") ?? "Bùi Trung Kiên (Nhân viên)";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TravelWeb</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TravelWeb.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-3">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-primary fs-4" asp-area="" asp-controller="Home" asp-action="Index">
+                    ✈️ TravelWeb
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i> Trang Chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Tour" asp-action="Index"><i class="bi bi-compass"></i> Tour Du Lịch</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Booking" asp-action="LichSuDatTour"><i class="bi bi-card-checklist"></i> Lịch Sử Đặt Tour</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="LienHe"><i class="bi bi-chat-dots"></i> Liên Hệ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Report" asp-action="Index"><i class="bi bi-bar-chart-line"></i> Báo Cáo</a>
+                        </li>
+
+                        <!-- MENU PHÂN HỆ QUẢN TRỊ & NHÂN VIÊN (PHỤ TRÁCH: KIÊN) -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-bold text-primary" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-fill"></i> Quản Trị & Nghiệp Vụ
+                            </a>
+                            <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarDropdownAdmin">
+                                <li>
+                                    <a class="dropdown-item fw-bold" asp-controller="Admin" asp-action="Index">
+                                        <i class="bi bi-speedometer2 text-primary"></i> Bảng Điều Hành Quản Trị
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header text-uppercase small">Sprint 1 & 2 (Kiên)</h6></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="AdminDiaDiem" asp-action="Index">
+                                        <i class="bi bi-geo-alt-fill text-danger"></i> Quản Lý Địa Điểm & Hình Ảnh (DL-09)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="AdminTour" asp-action="Index">
+                                        <i class="bi bi-compass-fill text-success"></i> Quản Lý Tour & Số Chỗ (DL-13)
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header text-uppercase small">Sprint 3 & 4 (Kiên)</h6></li>
+                                <li>
+                                    <a class="dropdown-item fw-bold text-warning-emphasis" asp-controller="AdminDonDat" asp-action="Index">
+                                        <i class="bi bi-card-checklist text-warning"></i> Xử Lý Đơn Đặt Tour (DL-19)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="AdminDanhGia" asp-action="Index">
+                                        <i class="bi bi-star-half text-danger"></i> Kiểm Duyệt Đánh Giá (DL-22)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="AdminLienHe" asp-action="Index">
+                                        <i class="bi bi-envelope-paper text-info"></i> Xử Lý Liên Hệ Khách (DL-22)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="AdminNhaCungCap" asp-action="Index">
+                                        <i class="bi bi-buildings text-secondary"></i> Quản Lý Nhà Cung Cấp (DL-22)
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <!-- KHU VỰC CHUYỂN ĐỔI VAI TRÒ NHANH (DEMO PHÂN QUYỀN) -->
+                    <div class="d-flex align-items-center gap-2">
+                        <form asp-controller="Admin" asp-action="SwitchRole" method="post" class="d-inline-flex align-items-center gap-1">
+                            <span class="small text-muted d-none d-md-inline">Vai trò:</span>
+                            <select name="role" class="form-select form-select-sm fw-bold @(currentRole == "ADMIN" ? "text-primary" : currentRole == "NHAN_VIEN" ? "text-success" : "text-secondary")" onchange="this.form.submit()" style="width: auto;">
+                                <option value="NHAN_VIEN" selected="@(currentRole == "NHAN_VIEN")">🧑‍💼 Nhân Viên (Bùi Trung Kiên)</option>
+                                <option value="ADMIN" selected="@(currentRole == "ADMIN")">👑 Quản Trị (Admin)</option>
+                                <option value="KHACH_HANG" selected="@(currentRole == "KHACH_HANG")">👤 Khách Hàng</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-5 py-4 bg-light">
+        <div class="container text-center">
+            <p class="mb-1">&copy; 2026 - <strong>TravelWeb</strong> - Hệ thống Giới thiệu địa điểm du lịch & Đặt tour trực tuyến.</p>
+            <p class="small text-secondary mb-0">Phân hệ Quản trị & Nghiệp vụ phát triển bởi <strong>Bùi Trung Kiên</strong> (DL-03, DL-09, DL-13, DL-19, DL-22).</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
