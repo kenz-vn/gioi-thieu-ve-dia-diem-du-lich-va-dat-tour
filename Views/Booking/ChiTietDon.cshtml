@@ -1,0 +1,168 @@
+@model TravelWeb.Models.DatLich
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Đặt Tour - " + Model.MaTraCuu;
+    bool canCancel = (Model.TrangThaiDat == "CHO_XAC_NHAN" || Model.TrangThaiDat == "DA_XAC_NHAN") && (Model.NgayThamQuan.Date > DateTime.Today.AddDays(1));
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-1">Chi Tiết Đơn Đặt Tour</h2>
+            <p class="text-muted mb-0">Mã tra cứu: <span class="badge bg-primary fs-6">@Model.MaTraCuu</span> | Mã đơn hệ thống: <code>@Model.MaDatLich</code></p>
+        </div>
+        <div>
+            <a asp-action="LichSuDatTour" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- CỘT TRÁI: THÔNG TIN TOUR VÀ ĐƠN HÀNG -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-compass-fill text-primary"></i> Thông Tin Tour Đã Đặt</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column flex-md-row gap-3">
+                        @if (!string.IsNullOrEmpty(Model.DichVu?.HinhAnhPhong))
+                        {
+                            <img src="~/@Model.DichVu.HinhAnhPhong" class="rounded-3" style="width: 180px; height: 130px; object-fit: cover;" alt="Tour" />
+                        }
+                        <div>
+                            <h4 class="fw-bold text-primary mb-2">@Model.DichVu?.TenDichVu</h4>
+                            <p class="mb-1 text-muted"><i class="bi bi-geo-alt-fill text-danger"></i> <strong>Địa điểm:</strong> @Model.DichVu?.DiaDiem?.TenDiaDiem - @Model.DichVu?.DiaDiem?.DiaChi</p>
+                            <p class="mb-1 text-muted"><i class="bi bi-clock-history text-info"></i> <strong>Thời lượng:</strong> @(Model.DichVu?.ThoiLuong ?? "Theo lịch trình")</p>
+                            <p class="mb-0 text-muted"><i class="bi bi-calendar-event text-success"></i> <strong>Ngày khởi hành:</strong> <span class="fw-bold text-dark">@Model.NgayThamQuan.ToString("dd/MM/yyyy")</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-person-lines-fill text-primary"></i> Thông Tin Người Đặt</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Họ và tên người đặt:</span>
+                            <p class="fw-bold mb-0">@Model.HoTen</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Số điện thoại liên hệ:</span>
+                            <p class="fw-bold mb-0">@Model.SoDienthoai</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Email nhận vé:</span>
+                            <p class="fw-bold mb-0">@Model.Email</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small">Thời gian đặt vé:</span>
+                            <p class="fw-bold mb-0">@Model.ThoiGianTao?.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.LyDoTuChoi))
+                    {
+                        <div class="alert alert-warning mt-3 mb-0 py-2">
+                            <strong><i class="bi bi-info-circle-fill"></i> Ghi chú / Lý do:</strong> @Model.LyDoTuChoi
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: TRẠNG THÁI VÀ CHI PHÍ THANH TOÁN -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-credit-card-2-front-fill text-primary"></i> Trạng Thái & Chi Phí</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3 text-center">
+                        <span class="text-muted small d-block mb-1">Trạng thái đơn:</span>
+                        @if (Model.TrangThaiDat == "CHO_XAC_NHAN")
+                        {
+                            <span class="badge bg-warning text-dark fs-6 px-3 py-2"><i class="bi bi-hourglass-split"></i> Chờ Xác Nhận</span>
+                        }
+                        else if (Model.TrangThaiDat == "DA_XAC_NHAN")
+                        {
+                            <span class="badge bg-success fs-6 px-3 py-2"><i class="bi bi-check-circle-fill"></i> Đã Xác Nhận</span>
+                        }
+                        else if (Model.TrangThaiDat == "DA_HUY")
+                        {
+                            <span class="badge bg-danger fs-6 px-3 py-2"><i class="bi bi-x-circle-fill"></i> Đã Hủy</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary fs-6 px-3 py-2">@Model.TrangThaiDat</span>
+                        }
+                    </div>
+
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span>Số lượng khách:</span>
+                            <span class="fw-bold">@Model.SoLuongKhach người</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span>Giá tour/khách:</span>
+                            <span class="fw-bold">@((Model.DichVu?.GiaKhuyenMai ?? Model.DichVu?.GiaTien ?? 0).ToString("N0")) VNĐ</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 bg-light p-2 rounded">
+                            <span class="fw-bold text-primary">Tiền cọc cần thanh toán:</span>
+                            <span class="fw-bold text-danger fs-5">@Model.SoTienCoc.ToString("N0") VNĐ</span>
+                        </li>
+                    </ul>
+
+                    <!-- THAO TÁC HỦY ĐƠN THEO UC-04 -->
+                    @if (canCancel)
+                    {
+                        <button type="button" class="btn btn-outline-danger w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#modalHuyDon">
+                            <i class="bi bi-x-octagon"></i> Hủy Đơn Đặt Tour
+                        </button>
+                        <small class="text-muted d-block text-center mt-2" style="font-size: 0.78rem;">
+                            * Điều kiện hủy: Phải hủy trước ngày khởi hành tối thiểu 2 ngày.
+                        </small>
+                    }
+                    else if (Model.TrangThaiDat != "DA_HUY")
+                    {
+                        <div class="alert alert-light border small text-muted text-center mb-0">
+                            <i class="bi bi-lock-fill"></i> Đơn này không đủ điều kiện tự hủy (quá hạn hoặc trạng thái không hợp lệ).
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL XÁC NHẬN HỦY ĐƠN (UC-04) -->
+@if (canCancel)
+{
+    <div class="modal fade" id="modalHuyDon" tabindex="-1" aria-labelledby="modalHuyDonLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <form method="post" asp-action="HuyDon">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title fw-bold" id="modalHuyDonLabel"><i class="bi bi-exclamation-triangle-fill"></i> Xác Nhận Hủy Đơn Đặt Tour</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <p class="mb-3">Bạn có chắc chắn muốn hủy đơn đặt tour <strong>@Model.MaTraCuu</strong>? Sau khi hủy, số chỗ đã giữ (@Model.SoLuongKhach khách) sẽ được hoàn trả cho tour.</p>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Lý do hủy đơn:</label>
+                            <textarea name="lyDoHuy" class="form-control" rows="3" placeholder="Nhập lý do hủy (ví dụ: bận việc đột xuất, đổi lịch trình...)..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng (Không hủy)</button>
+                        <button type="submit" class="btn btn-danger fw-bold"><i class="bi bi-check-lg"></i> Đồng ý Hủy Đơn</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

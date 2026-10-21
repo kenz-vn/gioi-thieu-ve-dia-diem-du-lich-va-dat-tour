@@ -1,0 +1,109 @@
+@model TravelWeb.Models.DichVu
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- CỘT 1: THÔNG TIN CHI TIẾT TOUR -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="~/@Model.HinhAnhPhong" class="card-img-top" alt="Ảnh tour" style="height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <h3 class="card-title text-primary">@Model.TenDichVu</h3>
+                    <p class="text-muted"><i class="bi bi-geo-alt"></i> <strong>Địa điểm:</strong> @Model.DiaDiem?.TenDiaDiem - @Model.DiaDiem?.DiaChi</p>
+                    
+                    <hr />
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Giá niêm yết:</span>
+                        <span class="fs-5 fw-bold text-danger">@Model.GiaTien.ToString("N0") VNĐ / khách</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Tỷ lệ đặt cọc:</span>
+                        <span class="badge bg-info text-dark">@Model.TyLeCoc%</span>
+                    </div>
+
+                    <div class="alert alert-light border mt-3">
+                        <small class="text-muted">
+                            📌 <strong>Lưu ý:</strong> Bạn chỉ cần thanh toán trước số tiền cọc (@Model.TyLeCoc%) để giữ chỗ. Số tiền còn lại sẽ thanh toán trực tiếp khi tham gia tour.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT 2: FORM NHẬP THÔNG TIN ĐẶT TOUR -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-3 text-success">Thông Tin Đặt Tour</h4>
+                
+                <form asp-controller="Booking" asp-action="XacNhanDatTour" method="post">
+                    <!-- Truyền ID dịch vụ tour ngầm -->
+                    <input type="hidden" name="maDichVu" value="@Model.MaDichVu" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Họ và tên người đặt:</label>
+                        <input type="text" name="hoTen" class="form-control" value="@ViewBag.HoTen" placeholder="Nhập họ và tên đầy đủ..." required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Số điện thoại:</label>
+                            <input type="tel" name="soDienthoai" class="form-control" value="@ViewBag.SoDienthoai" placeholder="0901234567..." required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Email nhận vé:</label>
+                            <input type="email" name="email" class="form-control" value="@ViewBag.Email" placeholder="example@gmail.com" required />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Ngày tham quan / Khởi hành:</label>
+                            <input type="date" name="ngayThamQuan" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Số lượng khách:</label>
+                            <input type="number" id="soLuongKhach" name="soLuongKhach" class="form-control" value="1" min="1" max="50" onchange="tinhTienCoc()" required />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- TỔNG TÍNH TIỀN CỌC TỰ ĐỘNG DÙNG JAVASCRIPT -->
+                    <div class="p-3 bg-light rounded mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tổng tiền tour:</span>
+                            <span id="txtTongTien" class="fw-bold">@Model.GiaTien.ToString("N0") VNĐ</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold text-success">Số tiền cọc phải trả:</span>
+                            <span id="txtSoTienCoc" class="fw-bold text-danger fs-5">
+                                @((Model.GiaTien * (Model.TyLeCoc / 100)).ToString("N0")) VNĐ
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">Xác Nhận Đặt Tour & Cọc</button>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">Quay lại</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT TÍNH TIỀN TỰ ĐỘNG KHI THAY ĐỔI SỐ LƯỢNG KHÁCH -->
+<script>
+    const giaTien = @Model.GiaTien;
+    const tyLeCoc = @Model.TyLeCoc;
+
+    function tinhTienCoc() {
+        const soLuong = document.getElementById("soLuongKhach").value || 1;
+        const tongTien = giaTien * soLuong;
+        const soTienCoc = tongTien * (tyLeCoc / 100);
+
+        document.getElementById("txtTongTien").innerText = tongTien.toLocaleString('vi-VN') + " VNĐ";
+        document.getElementById("txtSoTienCoc").innerText = soTienCoc.toLocaleString('vi-VN') + " VNĐ";
+    }
+</script>
