@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TravelWeb.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-3">
             <div class="container">
@@ -109,13 +109,13 @@
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container flex-grow-1 pb-5 mb-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted mt-5 py-4 bg-light">
+    <footer class="border-top footer text-muted mt-auto py-4 bg-light">
         <div class="container text-center">
             <p class="mb-1">&copy; 2026 - <strong>TravelWeb</strong> - Hệ thống Giới thiệu địa điểm du lịch & Đặt tour trực tuyến.</p>
             <p class="small text-secondary mb-0">Phân hệ Quản trị & Nghiệp vụ phát triển bởi <strong>Bùi Trung Kiên</strong> (DL-03, DL-09, DL-13, DL-19, DL-22).</p>

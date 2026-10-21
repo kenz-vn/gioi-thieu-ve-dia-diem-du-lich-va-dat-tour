@@ -18,7 +18,28 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 0;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar hiện đại, mượt mà */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f3f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #0d6efd;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0b5ed7;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
