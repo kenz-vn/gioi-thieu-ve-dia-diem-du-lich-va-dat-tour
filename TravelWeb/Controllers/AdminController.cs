@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TravelWeb.Filters;
 using TravelWeb.Models;
 
 namespace TravelWeb.Controllers
@@ -13,16 +14,15 @@ namespace TravelWeb.Controllers
             _context = context;
         }
 
-        // Dashboard trung tâm điều hành quản trị của Kiên
+        // Dashboard trung tâm điều hành quản trị
+        [PhanQuyen("ADMIN", "NHAN_VIEN")]
         public async Task<IActionResult> Index()
         {
-            // Lấy vai trò hiện tại trong Session (mặc định NHAN_VIEN)
+            // Lấy vai trò hiện tại trong Session
             string? role = HttpContext.Session.GetString("CURRENT_ROLE");
             if (string.IsNullOrEmpty(role))
             {
-                role = "NHAN_VIEN";
-                HttpContext.Session.SetString("CURRENT_ROLE", role);
-                HttpContext.Session.SetString("CURRENT_USER", "Bùi Trung Kiên (Nhân viên)");
+                return RedirectToAction("DangNhap", "TaiKhoan", new { returnUrl = "/Admin" });
             }
 
             ViewBag.CurrentRole = role;

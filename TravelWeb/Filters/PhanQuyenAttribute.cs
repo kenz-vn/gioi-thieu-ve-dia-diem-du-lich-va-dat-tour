@@ -17,20 +17,18 @@ namespace TravelWeb.Filters
             var session = context.HttpContext.Session;
             string? currentRole = session.GetString("CURRENT_ROLE");
 
-            // Mặc định nếu chưa đăng nhập hoặc chưa chọn role, ta có thể đặt là NHAN_VIEN hoặc ADMIN để tiện demo ban đầu,
-            // nhưng nếu đã set KHACH_HANG thì sẽ kiểm tra nghiêm ngặt
+            // Nếu chưa đăng nhập mà truy cập chức năng yêu cầu quyền -> Chuyển về trang Đăng nhập
             if (string.IsNullOrEmpty(currentRole))
             {
-                // Mặc định cấp quyền NHAN_VIEN cho session mới để tiện thao tác kiểm thử ngay
-                currentRole = "NHAN_VIEN";
-                session.SetString("CURRENT_ROLE", currentRole);
-                session.SetString("CURRENT_USER", "Bùi Trung Kiên (Nhân viên)");
+                context.Result = new RedirectToActionResult("DangNhap", "TaiKhoan", new { returnUrl = context.HttpContext.Request.Path });
+                return;
             }
 
             if (!_vaiTroChoPhep.Contains(currentRole) && !_vaiTroChoPhep.Contains("ALL"))
             {
-                // Bị từ chối quyền truy cập
+                // Bị từ chối quyền truy cập (ví dụ khách hàng cố vào trang quản trị)
                 context.Result = new RedirectToActionResult("KhongCoQuyen", "Admin", new { yeuCau = string.Join(", ", _vaiTroChoPhep) });
+                return;
             }
 
             base.OnActionExecuting(context);

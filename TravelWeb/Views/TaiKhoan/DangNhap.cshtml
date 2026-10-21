@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <span class="fs-1 text-primary">✈️</span>
+                        <h3 class="fw-bold text-dark mt-2">Đăng Nhập</h3>
+                        <p class="text-muted small">Chào mừng bạn quay lại với TravelWeb</p>
+                    </div>
+
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger py-2 small" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.ErrorMessage
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success py-2 small" role="alert">
+                            <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <form method="post" asp-action="DangNhap">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email hoặc Số điện thoại</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                <input type="text" name="taiKhoan" class="form-control" placeholder="Nhập email hoặc số điện thoại..." required autofocus />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mật khẩu</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                <input type="password" name="matKhau" class="form-control" placeholder="Nhập mật khẩu..." required />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3 shadow-sm mb-3">
+                            <i class="bi bi-box-arrow-in-right"></i> Đăng Nhập
+                        </button>
+
+                        <div class="text-center">
+                            <span class="text-muted small">Chưa có tài khoản? </span>
+                            <a asp-action="DangKy" class="fw-bold text-decoration-none text-primary small">Đăng ký ngay</a>
+                        </div>
+                    </form>
+
+                    <hr class="my-4 text-muted" />
+
+                    <!-- KHU VỰC ĐĂNG NHẬP NHANH PHỤC VỤ DEMO / CHẤM BÀI -->
+                    <div class="bg-light p-3 rounded-3 text-center">
+                        <p class="small fw-bold text-secondary mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> Đăng nhập nhanh kiểm thử (1-Click):</p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            <form method="post" asp-action="DangNhapNhanh" class="d-inline">
+                                <input type="hidden" name="role" value="ADMIN" />
+                                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                                <button type="submit" class="btn btn-outline-primary btn-sm fw-semibold">👑 Admin</button>
+                            </form>
+                            <form method="post" asp-action="DangNhapNhanh" class="d-inline">
+                                <input type="hidden" name="role" value="NHAN_VIEN" />
+                                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                                <button type="submit" class="btn btn-outline-success btn-sm fw-semibold">🧑‍💼 Nhân Viên</button>
+                            </form>
+                            <form method="post" asp-action="DangNhapNhanh" class="d-inline">
+                                <input type="hidden" name="role" value="KHACH_HANG" />
+                                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm fw-semibold">👤 Khách Hàng</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
