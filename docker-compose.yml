@@ -1,0 +1,29 @@
+services:
+  # 1. Container CSDL SQL Server 2022
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: travelweb_sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong@Password123
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  # 2. Container Ung dung Web ASP.NET Core
+  travelweb:
+    build:
+      context: ./TravelWeb
+      dockerfile: Dockerfile
+    container_name: travelweb_app
+    ports:
+      - "5230:5230"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QuanLyDuLichDB;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+
+volumes:
+  sqlserver_data:
