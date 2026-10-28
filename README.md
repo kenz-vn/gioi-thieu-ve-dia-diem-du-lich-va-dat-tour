@@ -13,7 +13,7 @@ Dự án được xây dựng nhằm cung cấp một nền tảng website trung
 
 ---
 
-## 👥 2. THÀNH VIÊN NHÓM THỰC HIỆN
+## 👥 2. THÀNH VIÊN NHÓM THỰC HIỆN (NHÓM 2)
 
 | STT | Họ và Tên | Vai trò chính trong dự án | Phụ trách cụ thể |
 | :---: | :--- | :--- | :--- |
@@ -93,5 +93,5 @@ Khi trang web đang chạy trên máy tính, để người khác ở xa có th�
 ---
 
 ## 📜 7. GIẤY PHÉP & BẢN QUYỀN
-Dự án được phát triển phục vụ học phần Công Nghệ Phần Mềm - Nhóm 6.
+Dự án được phát triển phục vụ học phần Công Nghệ Phần Mềm - Nhóm 2.
 Mọi mã nguồn và tài liệu liên quan đều thuộc bản quyền của nhóm tác giả.
