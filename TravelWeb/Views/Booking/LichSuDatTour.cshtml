@@ -1,72 +1,166 @@
-﻿@model IEnumerable<TravelWeb.Models.DatLich>
+@model IEnumerable<TravelWeb.Models.DatLich>
+@{
+    ViewData["Title"] = "Lịch Sử Đặt Tour & Tra Cứu";
+}
 
-<div class="container mt-4">
-    <h2 class="mb-4">Lịch Sử Đặt Tour & Tra Cứu Đơn</h2>
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-1"><i class="bi bi-card-checklist"></i> Lịch Sử Đặt Tour Của Bạn</h2>
+            <p class="text-muted mb-0">Theo dõi trạng thái xử lý, xem chi tiết vé hoặc hủy đơn theo quy định</p>
+        </div>
+        <a asp-controller="Tour" asp-action="Index" class="btn btn-outline-primary fw-semibold mt-2 mt-md-0">
+            <i class="bi bi-compass"></i> Khám phá thêm tour khác
+        </a>
+    </div>
 
     <!-- Form tra cứu theo mã -->
-    <form method="get" asp-action="LichSuDatTour" class="row g-3 mb-4">
-        <div class="col-md-6">
-            <input type="text" name="maTraCuu" class="form-control" placeholder="Nhập mã tra cứu (Ví dụ: TOUR-20261020-xxxx)...">
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-success w-100">Tra Cứu Đơn</button>
-        </div>
-    </form>
+    <div class="card shadow-sm border-0 bg-light p-3 mb-4 rounded-3">
+        <form method="get" asp-action="LichSuDatTour" class="row g-2 align-items-center">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="maTraCuu" class="form-control" value="@ViewBag.MaTraCuu" placeholder="Nhập mã tra cứu đơn (Ví dụ: TOUR-20261021-xxxx)...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100 fw-bold">Tra Cứu Đơn</button>
+            </div>
+        </form>
+    </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Mã Tra Cứu</th>
-                    <th>Tên Tour</th>
-                    <th>Ngày Khởi Hành</th>
-                    <th>Số Khách</th>
-                    <th>Tiền Cọc</th>
-                    <th>Trạng Thái</th>
-                    <th>Thời Gian Đặt</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var item in Model)
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã Tra Cứu</th>
+                        <th>Tên Tour Du Lịch</th>
+                        <th>Ngày Khởi Hành</th>
+                        <th>Số Khách</th>
+                        <th>Tiền Cọc</th>
+                        <th>Trạng Thái</th>
+                        <th>Thời Gian Đặt</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            bool canCancel = (item.TrangThaiDat == "CHO_XAC_NHAN" || item.TrangThaiDat == "DA_XAC_NHAN") && (item.NgayThamQuan.Date > DateTime.Today.AddDays(1));
+                            <tr>
+                                <td>
+                                    <strong class="text-primary">@item.MaTraCuu</strong>
+                                    <div class="small text-muted">@item.MaDatLich</div>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">@item.DichVu?.TenDichVu</span>
+                                    @if (item.DichVu?.DiaDiem != null)
+                                    {
+                                        <div class="small text-muted"><i class="bi bi-geo-alt"></i> @item.DichVu.DiaDiem.TenDiaDiem</div>
+                                    }
+                                </td>
+                                <td><span class="fw-bold">@item.NgayThamQuan.ToString("dd/MM/yyyy")</span></td>
+                                <td>@item.SoLuongKhach người</td>
+                                <td><strong class="text-danger">@item.SoTienCoc.ToString("N0") VNĐ</strong></td>
+                                <td>
+                                    @if (item.TrangThaiDat == "CHO_XAC_NHAN")
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Chờ xác nhận</span>
+                                    }
+                                    else if (item.TrangThaiDat == "DA_XAC_NHAN")
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Đã xác nhận</span>
+                                    }
+                                    else if (item.TrangThaiDat == "DA_HUY")
+                                    {
+                                        <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Đã hủy</span>
+                                    }
+                                    else if (item.TrangThaiDat == "TU_CHOI")
+                                    {
+                                        <span class="badge bg-secondary"><i class="bi bi-ban"></i> Bị từ chối</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info text-dark">@item.TrangThaiDat</span>
+                                    }
+                                </td>
+                                <td>@item.ThoiGianTao?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="ChiTietDon" asp-route-id="@item.Id" class="btn btn-outline-primary" title="Xem chi tiết đơn">
+                                            <i class="bi bi-eye"></i> Chi tiết
+                                        </a>
+                                        @if (canCancel)
+                                        {
+                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalHuy_@item.Id" title="Hủy đơn đặt tour">
+                                                <i class="bi bi-x-circle"></i> Hủy
+                                            </button>
+                                        }
+                                    </div>
+
+                                    <!-- MODAL HỦY ĐƠN THEO UC-04 -->
+                                    @if (canCancel)
+                                    {
+                                        <div class="modal fade text-start" id="modalHuy_@item.Id" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow">
+                                                    <form method="post" asp-action="HuyDon">
+                                                        <input type="hidden" name="id" value="@item.Id" />
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> Hủy Đơn Đặt Tour</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body p-4">
+                                                            <p class="mb-2">Bạn có chắc muốn hủy đơn tour <strong>@item.DichVu?.TenDichVu</strong> (Mã: <code>@item.MaTraCuu</code>)?</p>
+                                                            <p class="small text-muted mb-3">* Số chỗ (@item.SoLuongKhach khách) sẽ được hoàn trả lại cho tour.</p>
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">Lý do hủy đơn:</label>
+                                                                <input type="text" name="lyDoHuy" class="form-control" placeholder="Nhập lý do hủy (không bắt buộc)..." />
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer bg-light">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                            <button type="submit" class="btn btn-danger fw-bold">Xác nhận hủy đơn</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td><strong class="text-primary">@item.MaTraCuu</strong></td>
-                            <td>@item.DichVu?.TenDichVu</td>
-                            <td>@item.NgayThamQuan.ToString("dd/MM/yyyy")</td>
-                            <td>@item.SoLuongKhach</td>
-                            <td>@item.SoTienCoc.ToString("N0") VNĐ</td>
-                            <td>
-                                @if (item.TrangThaiDat == "CHO_XAC_NHAN")
-                                {
-                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
-                                }
-                                else if (item.TrangThaiDat == "DA_XAC_NHAN")
-                                {
-                                    <span class="badge bg-success">Đã xác nhận</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">@item.TrangThaiDat</span>
-                                }
+                            <td colspan="8" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox fs-1 d-block text-secondary mb-2"></i>
+                                Bạn chưa có đơn đặt tour nào trong hệ thống!
                             </td>
-                            <td>@item.ThoiGianTao?.ToString("dd/MM/yyyy HH:mm")</td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">Chưa có đơn đặt tour nào trong hệ thống!</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

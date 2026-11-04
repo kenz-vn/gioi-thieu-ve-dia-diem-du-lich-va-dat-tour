@@ -1,7 +1,14 @@
-﻿@model IEnumerable<TravelWeb.Controllers.BaoCaoDoanhThuViewModel>
+@model IEnumerable<TravelWeb.Controllers.BaoCaoDoanhThuViewModel>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-primary">📊 Báo Cáo Quản Trị: Doanh Thu, Số Đơn & Tour Phổ Biến</h2>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold mb-0">📊 Báo Cáo Thống Kê Đặt Tour</h2>
+        <!-- NÚT XUẤT CSV - UC-06 -->
+        <a asp-action="XuatCSV" asp-route-tuNgay="@ViewBag.TuNgay" asp-route-denNgay="@ViewBag.DenNgay"
+           class="btn btn-success fw-bold shadow-sm mt-2 mt-md-0">
+            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Xuất Báo Cáo CSV
+        </a>
+    </div>
 
     <!-- Form Lọc Theo Khoảng Thời Gian -->
     <div class="card p-3 mb-4 bg-light shadow-sm">
@@ -20,24 +27,42 @@
         </form>
     </div>
 
-    <!-- Thẻ Tổng Quan (Cards) -->
+        <!-- Thẻ Tổng Quan (Cards) -->
     <div class="row text-white mb-4">
-        <div class="col-md-4 mb-2">
-            <div class="card bg-info p-3 shadow-sm rounded">
-                <h5>Tổng Số Đơn Đặt</h5>
-                <h3 class="fw-bold mb-0">@ViewBag.TongDon đơn</h3>
+        <div class="col-md-2 mb-2">
+            <div class="card bg-secondary p-3 shadow-sm rounded text-center">
+                <div class="small fw-bold">Tổng Đơn</div>
+                <h4 class="fw-bold mb-0">@ViewBag.TongDonTatCa</h4>
             </div>
         </div>
-        <div class="col-md-4 mb-2">
-            <div class="card bg-success p-3 shadow-sm rounded">
-                <h5>Tổng Số Khách Phục Vụ</h5>
-                <h3 class="fw-bold mb-0">@ViewBag.TongKhach khách</h3>
+        <div class="col-md-2 mb-2">
+            <div class="card bg-warning text-dark p-3 shadow-sm rounded text-center">
+                <div class="small fw-bold">Chờ Xác Nhận</div>
+                <h4 class="fw-bold mb-0">@ViewBag.DonChoXacNhan</h4>
             </div>
         </div>
-        <div class="col-md-4 mb-2">
-            <div class="card bg-warning text-dark p-3 shadow-sm rounded">
-                <h5>Tổng Doanh Thu Tiền Cọc</h5>
-                <h3 class="fw-bold mb-0">@(((decimal)(ViewBag.TongDoanhThu ?? 0)).ToString("N0")) VNĐ</h3>
+        <div class="col-md-2 mb-2">
+            <div class="card bg-success p-3 shadow-sm rounded text-center">
+                <div class="small fw-bold">Đã Xác Nhận</div>
+                <h4 class="fw-bold mb-0">@ViewBag.DonDaXacNhan</h4>
+            </div>
+        </div>
+        <div class="col-md-2 mb-2">
+            <div class="card bg-danger p-3 shadow-sm rounded text-center">
+                <div class="small fw-bold">Đã Hủy / Từ Chối</div>
+                <h4 class="fw-bold mb-0">@((ViewBag.DonDaHuy ?? 0) + (ViewBag.DonTuChoi ?? 0))</h4>
+            </div>
+        </div>
+        <div class="col-md-2 mb-2">
+            <div class="card bg-info p-3 shadow-sm rounded text-center">
+                <div class="small fw-bold">Tổng Số Khách</div>
+                <h4 class="fw-bold mb-0">@ViewBag.TongKhach</h4>
+            </div>
+        </div>
+        <div class="col-md-2 mb-2">
+            <div class="card bg-primary p-3 shadow-sm rounded text-center">
+                <div class="small fw-bold">Doanh Thu Cọc</div>
+                <h5 class="fw-bold mb-0">@(((decimal)(ViewBag.TongDoanhThu ?? 0)).ToString("N0"))đ</h5>
             </div>
         </div>
     </div>

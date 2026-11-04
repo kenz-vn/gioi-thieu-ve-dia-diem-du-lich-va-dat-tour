@@ -39,7 +39,7 @@ namespace TravelWeb.Models
 
         [MaxLength(20)]
         [Column("trang_thai_dat")]
-        public string? TrangThaiDat { get; set; }
+        public string? TrangThaiDat { get; set; } // CHO_XAC_NHAN, DA_XAC_NHAN, TU_CHOI, HOAN_THANH, DA_HUY
 
         [MaxLength(50)]
         [Column("ma_voucher")]
@@ -63,6 +63,26 @@ namespace TravelWeb.Models
         [MaxLength(20)]
         [Column("so_dienthoai")]
         public string? SoDienthoai { get; set; }
+
+        // --- CÁC TRƯỜNG PHỤC VỤ DL-19 (KIÊN) ---
+        [MaxLength(500)]
+        [Column("ly_do_tu_choi")]
+        [Display(Name = "Lý do từ chối")]
+        public string? LyDoTuChoi { get; set; }
+
+        [MaxLength(100)]
+        [Column("nguoi_xu_ly")]
+        [Display(Name = "Nhân viên xử lý")]
+        public string? NguoiXuLy { get; set; }
+
+        [Column("thoi_gian_xu_ly")]
+        [Display(Name = "Thời gian xử lý")]
+        public DateTime? ThoiGianXuLy { get; set; }
+
+        [MaxLength(500)]
+        [Column("ghi_chu_xu_ly")]
+        [Display(Name = "Ghi chú xử lý nội bộ")]
+        public string? GhiChuXuLy { get; set; }
 
         [ForeignKey(nameof(MaDichVu))]
         public virtual DichVu? DichVu { get; set; }

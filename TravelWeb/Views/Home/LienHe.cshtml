@@ -1,0 +1,98 @@
+@model TravelWeb.Models.LienHe
+@{
+    ViewData["Title"] = "Liên Hệ & Hỗ Trợ Đặt Tour";
+}
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-primary"><i class="bi bi-chat-heart"></i> Liên Hệ & Hỗ Trợ Khách Hàng</h2>
+                <p class="text-muted">Bạn có thắc mắc về lịch trình, chính sách tour hay muốn đặt tour đoàn riêng? Hãy gửi lời nhắn cho chúng tôi!</p>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="LienHe" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="HoTen" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                                <input asp-for="HoTen" class="form-control" placeholder="Họ và tên của bạn..." />
+                                <span asp-validation-for="HoTen" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                                <input asp-for="Email" class="form-control" placeholder="Địa chỉ email nhận phản hồi..." />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="SoDienThoai" class="form-label fw-bold"></label>
+                                <input asp-for="SoDienThoai" class="form-control" placeholder="Số điện thoại di động..." />
+                                <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="TieuDe" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                                <input asp-for="TieuDe" class="form-control" placeholder="Ví dụ: Tư vấn tour Sapa đoàn 20 người..." />
+                                <span asp-validation-for="TieuDe" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="NoiDung" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                                <textarea asp-for="NoiDung" class="form-control" rows="5" placeholder="Chi tiết yêu cầu của bạn (ngày dự kiến đi, số lượng người, dịch vụ cần hỗ trợ...)..."></textarea>
+                                <span asp-validation-for="NoiDung" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold">
+                                    <i class="bi bi-send-fill"></i> Gửi Yêu Cầu Liên Hệ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- THÔNG TIN VĂN PHÒNG -->
+            <div class="row g-3 mt-4 text-center">
+                <div class="col-md-4">
+                    <div class="p-3 bg-white rounded shadow-sm border">
+                        <i class="bi bi-geo-alt-fill fs-3 text-primary"></i>
+                        <h6 class="fw-bold mt-2">Trụ Sở Chính</h6>
+                        <p class="small text-muted mb-0">Hà Nội & TP. Hồ Chí Minh</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-white rounded shadow-sm border">
+                        <i class="bi bi-telephone-fill fs-3 text-success"></i>
+                        <h6 class="fw-bold mt-2">Hotline 24/7</h6>
+                        <p class="small text-muted mb-0">1900 888 999 (Miễn phí cước)</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-white rounded shadow-sm border">
+                        <i class="bi bi-envelope-check-fill fs-3 text-warning"></i>
+                        <h6 class="fw-bold mt-2">Hỗ Trợ Trực Tuyến</h6>
+                        <p class="small text-muted mb-0">support@travelweb.vn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

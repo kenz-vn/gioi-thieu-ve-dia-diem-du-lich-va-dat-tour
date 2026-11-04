@@ -1,0 +1,101 @@
+@model TravelWeb.Models.LienHe
+@{
+    ViewData["Title"] = "Xử Lý Liên Hệ: " + Model.TieuDe;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="fw-bold text-info-emphasis mb-1"><i class="bi bi-envelope-open"></i> Chi Tiết Yêu Cầu Liên Hệ</h3>
+                <span class="badge bg-info text-dark">Task DL-22: Xử Lý Liên Hệ Khách Hàng (Kiên)</span>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light py-3">
+                <h5 class="fw-bold mb-0 text-primary">@Model.TieuDe</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-3 pb-3 border-bottom">
+                    <div class="col-md-6">
+                        <div class="text-muted small">Người gửi:</div>
+                        <strong class="fs-6 text-dark">@Model.HoTen</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Thời gian gửi:</div>
+                        <span>@Model.NgayGui.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <div class="text-muted small">Email:</div>
+                        <a href="mailto:@Model.Email"><i class="bi bi-envelope"></i> @Model.Email</a>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <div class="text-muted small">Số điện thoại:</div>
+                        <a href="tel:@Model.SoDienThoai"><i class="bi bi-telephone"></i> @(Model.SoDienThoai ?? "N/A")</a>
+                    </div>
+                </div>
+
+                <!-- NỘI DUNG YÊU CẦU -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark"><i class="bi bi-chat-left-text"></i> Nội dung khách hàng gửi:</label>
+                    <div class="p-3 bg-light rounded border text-dark" style="white-space: pre-line;">
+                        @Model.NoiDung
+                    </div>
+                </div>
+
+                <!-- PHẢN HỒI HIỆN TẠI NẾU ĐÃ CÓ -->
+                @if (!string.IsNullOrEmpty(Model.PhanHoi))
+                {
+                    <div class="p-3 bg-success-subtle rounded border border-success-subtle mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <strong class="text-success"><i class="bi bi-check-circle"></i> Đã phản hồi bởi: @Model.NguoiXuLy</strong>
+                            <small class="text-muted">@Model.NgayXuLy?.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                        <p class="mb-0 text-dark">@Model.PhanHoi</p>
+                    </div>
+                }
+
+                <!-- FORM XỬ LÝ VÀ PHẢN HỒI (TIÊU CHÍ DL-22: LƯU TRẠNG THÁI & GHI NHẬN THAO TÁC) -->
+                <div class="card border border-info-subtle">
+                    <div class="card-header bg-info-subtle fw-bold text-dark py-2">
+                        <i class="bi bi-pencil-square"></i> Cập Nhật Phản Hồi Cho Khách Hàng
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="XuLy" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Trạng thái xử lý:</label>
+                                <select name="trangThai" class="form-select">
+                                    <option value="DA_XAC_NHAN" selected="@(Model.TrangThai == "DA_XU_LY")">Đã xử lý xong (Hoàn tất phản hồi)</option>
+                                    <option value="DANG_XU_LY" selected="@(Model.TrangThai == "DANG_XU_LY")">Đang xử lý (Cần trao đổi thêm)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Nội dung phản hồi khách hàng: <span class="text-danger">*</span></label>
+                                <textarea name="phanHoi" class="form-control" rows="4" required placeholder="Nhập nội dung tư vấn, trả lời thắc mắc gửi tới khách hàng...">@Model.PhanHoi</textarea>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary fw-bold px-4">
+                                    <i class="bi bi-send-check"></i> Lưu & Hoàn Tất Xử Lý
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,144 @@
+@model IEnumerable<TravelWeb.Models.NhaCungCap>
+@{
+    ViewData["Title"] = "Quản Lý Nhà Cung Cấp Đối Tác (DL-22)";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold text-secondary mb-1"><i class="bi bi-buildings-fill"></i> Quản Lý Nhà Cung Cấp & Đối Tác</h2>
+        <span class="badge bg-secondary">Sprint 4 / Task DL-22: Quản Lý Nhà Cung Cấp Dịch Vụ Du Lịch (Kiên)</span>
+    </div>
+    <a asp-action="Create" class="btn btn-secondary fw-bold">
+        <i class="bi bi-plus-circle"></i> Thêm Nhà Cung Cấp Mới
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- BỘ LỌC TÌM KIẾM NHÀ CUNG CẤP -->
+<div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="tuKhoa" class="form-control" placeholder="Tìm tên nhà cung cấp, người liên hệ, SĐT..." value="@ViewBag.TuKhoa" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="loaiDichVu" class="form-select">
+                    <option value="">-- Tất cả loại dịch vụ --</option>
+                    <option value="Khách sạn / Lưu trú" selected="@(ViewBag.LoaiDichVu == "Khách sạn / Lưu trú")">Khách sạn / Lưu trú</option>
+                    <option value="Vận chuyển / Xe du lịch" selected="@(ViewBag.LoaiDichVu == "Vận chuyển / Xe du lịch")">Vận chuyển / Xe du lịch</option>
+                    <option value="Ẩm thực / Nhà hàng" selected="@(ViewBag.LoaiDichVu == "Ẩm thực / Nhà hàng")">Ẩm thực / Nhà hàng</option>
+                    <option value="Vé tham quan / Cáp treo" selected="@(ViewBag.LoaiDichVu == "Vé tham quan / Cáp treo")">Vé tham quan / Cáp treo</option>
+                    <option value="Hướng dẫn viên" selected="@(ViewBag.LoaiDichVu == "Hướng dẫn viên")">Hướng dẫn viên</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="DANG_HOP_TAC" selected="@(ViewBag.TrangThai == "DANG_HOP_TAC")">Đang hợp tác</option>
+                    <option value="TAM_DUNG" selected="@(ViewBag.TrangThai == "TAM_DUNG")">Tạm dừng</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-funnel"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- BẢNG DANH SÁCH NHÀ CUNG CẤP -->
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên Nhà Cung Cấp</th>
+                    <th>Loại Dịch Vụ</th>
+                    <th>Đại Diện Liên Hệ</th>
+                    <th>Thông Tin Liên Lạc</th>
+                    <th>Trạng Thái</th>
+                    <th class="text-end">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark fs-6">@item.TenNhaCungCap</div>
+                                <div class="small text-muted"><i class="bi bi-geo-alt"></i> @(item.DiaChi ?? "Chưa cập nhật địa chỉ")</div>
+                                @if (!string.IsNullOrEmpty(item.GhiChu))
+                                {
+                                    <div class="small text-secondary text-truncate" style="max-width: 300px;" title="@item.GhiChu">
+                                        <i class="bi bi-sticky"></i> @item.GhiChu
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                    @item.LoaiDichVu
+                                </span>
+                            </td>
+                            <td>
+                                <div><i class="bi bi-person"></i> @(item.NguoiLienHe ?? "Chưa chỉ định")</div>
+                            </td>
+                            <td>
+                                <div class="small"><i class="bi bi-telephone"></i> @(item.SoDienThoai ?? "N/A")</div>
+                                <div class="small text-muted"><i class="bi bi-envelope"></i> @(item.Email ?? "N/A")</div>
+                            </td>
+                            <td>
+                                @if (item.TrangThai == "DANG_HOP_TAC")
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đang hợp tác</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="bi bi-pause-circle"></i> Tạm dừng</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Edit" asp-route-id="@item.MaNhaCungCap" class="btn btn-outline-primary" title="Sửa thông tin đối tác">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </a>
+
+                                    <form asp-action="ToggleTrangThai" asp-route-id="@item.MaNhaCungCap" method="post" class="d-inline">
+                                        <button type="submit" class="btn @(item.TrangThai == "DANG_HOP_TAC" ? "btn-outline-warning" : "btn-outline-success")" title="Đổi trạng thái hợp tác">
+                                            <i class="bi @(item.TrangThai == "DANG_HOP_TAC" ? "bi-pause-fill" : "bi-play-fill")"></i>
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="Delete" asp-route-id="@item.MaNhaCungCap" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhà cung cấp này?');">
+                                        <button type="submit" class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i> Chưa có dữ liệu nhà cung cấp nào.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

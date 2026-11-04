@@ -1,0 +1,182 @@
+@model IEnumerable<TravelWeb.Models.DanhGia>
+@{
+    ViewData["Title"] = "Kiểm Duyệt Đánh Giá Khách Hàng (DL-22)";
+    int? currentFilter = ViewBag.DaDuyet;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold text-danger mb-1"><i class="bi bi-star-half"></i> Kiểm Duyệt Đánh Giá Khách Hàng</h2>
+        <span class="badge bg-danger">Sprint 4 / Task DL-22: Kiểm Duyệt Đánh Giá & Bảo Toàn Nội Dung Khách (Kiên)</span>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- QUY TẮC NGHIỆP VỤ TIÊU CHÍ DL-22 -->
+<div class="alert alert-info py-2 small mb-3">
+    <i class="bi bi-shield-check me-1"></i> <strong>Tiêu chí nghiệm thu DL-22:</strong>
+    Trạng thái kiểm duyệt được lưu trữ; <em>TUYỆT ĐỐI không tự ý sửa đổi nội dung và điểm đánh giá của khách hàng</em>. Nhân viên có quyền Duyệt hiển thị, Ẩn bình luận vi phạm và gửi Phản hồi chính thức.
+</div>
+
+<!-- TABS LỌC TRẠNG THÁI KIỂM DUYỆT -->
+<div class="d-flex gap-2 mb-4">
+    <a asp-action="Index" class="btn @(!currentFilter.HasValue ? "btn-dark" : "btn-outline-dark")">
+        Tất cả đánh giá
+    </a>
+    <a asp-action="Index" asp-route-daDuyet="0" class="btn @(currentFilter == 0 ? "btn-danger fw-bold" : "btn-outline-danger")">
+        <i class="bi bi-hourglass-split"></i> Chờ duyệt <span class="badge bg-danger ms-1">@ViewBag.CountChoDuyet</span>
+    </a>
+    <a asp-action="Index" asp-route-daDuyet="1" class="btn @(currentFilter == 1 ? "btn-success" : "btn-outline-success")">
+        <i class="bi bi-check-circle"></i> Đã duyệt công khai <span class="badge bg-secondary ms-1">@ViewBag.CountDaDuyet</span>
+    </a>
+    <a asp-action="Index" asp-route-daDuyet="-1" class="btn @(currentFilter == -1 ? "btn-secondary" : "btn-outline-secondary")">
+        <i class="bi bi-eye-slash"></i> Đã ẩn / Từ chối <span class="badge bg-secondary ms-1">@ViewBag.CountTuChoi</span>
+    </a>
+</div>
+
+<!-- DANH SÁCH THẺ ĐÁNH GIÁ -->
+<div class="row g-3">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-6">
+                <div class="card shadow-sm border-0 h-100 border-top @(item.DaDuyet == 0 ? "border-danger border-4" : item.DaDuyet == 1 ? "border-success border-4" : "border-secondary border-4")">
+                    <div class="card-body">
+                        <!-- HEADER CỦA ĐÁNH GIÁ -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="fw-bold mb-0">@(item.KhachHang != null ? item.KhachHang.HoTen : "Khách hàng ẩn danh")</h6>
+                                <div class="small text-muted">
+                                    <i class="bi bi-geo-alt"></i> @(item.DiaDiem != null ? item.DiaDiem.TenDiaDiem : "Điểm tham quan")
+                                    | Mã đơn: <span class="badge bg-light text-dark border">@item.MaDatLich</span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <!-- ĐIỂM SAO KHÁCH HÀNG (READ-ONLY) -->
+                                <div class="text-warning fs-5">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= item.DiemDanhGia)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                    <span class="small text-muted fw-bold ms-1">(@item.DiemDanhGia/5)</span>
+                                </div>
+                                <div class="small text-muted">@(item.NgayDanhGia?.ToString("dd/MM/yyyy HH:mm") ?? "")</div>
+                            </div>
+                        </div>
+
+                        <!-- TRẠNG THÁI HIỂN THỊ -->
+                        <div class="mb-3">
+                            @if (item.DaDuyet == 0)
+                            {
+                                <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Chờ nhân viên duyệt</span>
+                            }
+                            else if (item.DaDuyet == 1)
+                            {
+                                <span class="badge bg-success"><i class="bi bi-check2-circle"></i> Đã duyệt (Đang hiển thị trên web)</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary"><i class="bi bi-eye-slash-fill"></i> Đã ẩn khỏi web</span>
+                                @if (!string.IsNullOrEmpty(item.GhiChuKiemDuyet))
+                                {
+                                    <span class="small text-danger d-block mt-1">Lý do ẩn: @item.GhiChuKiemDuyet</span>
+                                }
+                            }
+                        </div>
+
+                        <!-- NỘI DUNG NHẬN XÉT CỦA KHÁCH (TIÊU CHÍ DL-22: BẢO TOÀN, CHỈ ĐỌC) -->
+                        <div class="p-3 bg-light rounded mb-3 border">
+                            <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-chat-quote"></i> Lời nhận xét của khách hàng (Bảo toàn nội dung):</label>
+                            <p class="mb-0 text-dark fst-italic">"@item.BinhLuan"</p>
+                        </div>
+
+                        <!-- PHẢN HỒI CỦA NHÂN VIÊN NẾU CÓ -->
+                        @if (!string.IsNullOrEmpty(item.PhanHoiCuaNhanVien))
+                        {
+                            <div class="p-3 bg-primary-subtle rounded mb-3 border border-primary-subtle">
+                                <label class="form-label small fw-bold text-primary mb-1"><i class="bi bi-reply-fill"></i> Phản hồi của ban quản trị:</label>
+                                <p class="mb-0 small text-dark">@item.PhanHoiCuaNhanVien</p>
+                            </div>
+                        }
+
+                        <!-- HÀNH ĐỘNG KIỂM DUYỆT -->
+                        <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                            @if (item.DaDuyet != 1)
+                            {
+                                <form asp-action="Duyet" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.MaDanhGia" />
+                                    <button type="submit" class="btn btn-sm btn-success fw-bold">
+                                        <i class="bi bi-check-lg"></i> Duyệt Hiển Thị
+                                    </button>
+                                </form>
+                            }
+
+                            <!-- FORM ẨN ĐÁNH GIÁ KÈM LÝ DO -->
+                            @if (item.DaDuyet != -1)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#collapseTuChoi_@item.MaDanhGia">
+                                    <i class="bi bi-eye-slash"></i> Ẩn Bình Luận
+                                </button>
+                            }
+
+                            <!-- FORM PHẢN HỒI KHÁCH HÀNG -->
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#collapsePhanHoi_@item.MaDanhGia">
+                                <i class="bi bi-reply"></i> Phản Hồi
+                            </button>
+                        </div>
+
+                        <!-- VÙNG NHẬP LÝ DO ẨN (COLLAPSE) -->
+                        <div class="collapse mt-2" id="collapseTuChoi_@item.MaDanhGia">
+                            <form asp-action="TuChoi" method="post" class="card card-body bg-light-subtle p-2">
+                                <input type="hidden" name="id" value="@item.MaDanhGia" />
+                                <label class="form-label small fw-bold text-danger">Lý do ẩn đánh giá này:</label>
+                                <input type="text" name="lyDo" class="form-control form-control-sm mb-2" required placeholder="Ví dụ: Quảng cáo spam, từ ngữ xúc phạm..." />
+                                <button type="submit" class="btn btn-sm btn-danger">Xác nhận ẩn</button>
+                            </form>
+                        </div>
+
+                        <!-- VÙNG NHẬP PHẢN HỒI (COLLAPSE) -->
+                        <div class="collapse mt-2" id="collapsePhanHoi_@item.MaDanhGia">
+                            <form asp-action="PhanHoi" method="post" class="card card-body bg-light-subtle p-2">
+                                <input type="hidden" name="id" value="@item.MaDanhGia" />
+                                <label class="form-label small fw-bold text-primary">Nội dung phản hồi khách hàng:</label>
+                                <textarea name="noiDungPhanHoi" class="form-control form-control-sm mb-2" rows="2" required placeholder="Cảm ơn quý khách đã đóng góp ý kiến..."></textarea>
+                                <button type="submit" class="btn btn-sm btn-primary">Gửi phản hồi</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="bi bi-chat-square-text fs-1 d-block mb-2"></i>
+            Không có đánh giá nào trong danh mục này.
+        </div>
+    }
+</div>

@@ -1,0 +1,116 @@
+@model TravelWeb.Models.DiaDiem
+@{
+    ViewData["Title"] = "Thêm Mới Địa Điểm Du Lịch";
+    var availableImages = ViewBag.AvailableImages as List<string> ?? new List<string>();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="fw-bold text-primary mb-1"><i class="bi bi-plus-circle-fill"></i> Thêm Mới Địa Điểm Du Lịch</h3>
+                <span class="badge bg-primary">Task DL-09: Quản trị Địa Điểm & Hình Ảnh (Kiên)</span>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row g-3">
+                        <!-- Tên địa điểm & Danh mục -->
+                        <div class="col-md-8">
+                            <label asp-for="TenDiaDiem" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
+                            <input asp-for="TenDiaDiem" class="form-control" placeholder="Ví dụ: Vịnh Hạ Long, Phố Cổ Hội An..." />
+                            <span asp-validation-for="TenDiaDiem" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="MaDanhMuc" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
+                            <select asp-for="MaDanhMuc" class="form-select" asp-items="ViewBag.DanhMucs">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+                            <span asp-validation-for="MaDanhMuc" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Địa chỉ & Hotline -->
+                        <div class="col-md-8">
+                            <label asp-for="DiaChi" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
+                            <input asp-for="DiaChi" class="form-control" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành..." />
+                            <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Hotline" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="Hotline" class="form-control" placeholder="0243.xxx.xxx hoặc 09xx..." />
+                            <span asp-validation-for="Hotline" class="text-danger small"></span>
+                        </div>
+
+                        <!-- QUẢN LÝ HÌNH ẢNH (Upload file hoặc Chọn ảnh có sẵn) -->
+                        <div class="col-12">
+                            <div class="card bg-light border p-3">
+                                <h6 class="fw-bold text-primary mb-2"><i class="bi bi-images"></i> Quản Lý Hình Ảnh Địa Điểm</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold">Cách 1: Tải lên hình ảnh từ máy tính (Upload)</label>
+                                        <input type="file" name="fileAnh" class="form-control" accept="image/*" />
+                                        <div class="form-text small">Hỗ trợ các định dạng .jpg, .png, .webp, .avif.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold">Cách 2: Chọn từ kho ảnh có sẵn trong thư viện</label>
+                                        <select name="anhCoSan" class="form-select" id="selectAnhCoSan">
+                                            <option value="">-- Chọn ảnh đại diện --</option>
+                                            @foreach (var img in availableImages)
+                                            {
+                                                <option value="@img">@img</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái hoạt động -->
+                        <div class="col-md-6">
+                            <label asp-for="TrangThai" class="form-label fw-bold text-dark"></label>
+                            <select asp-for="TrangThai" class="form-select">
+                                <option value="HOAT_DONG">Hoạt động bình thường</option>
+                                <option value="DONG_CUA">Tạm đóng cửa / Ngừng đón khách</option>
+                                <option value="BAO_TRI">Đang bảo trì / Nâng cấp</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NoiCanToi" class="form-label fw-bold text-dark"></label>
+                            <input asp-for="NoiCanToi" class="form-control" placeholder="Các điểm vui chơi nổi tiếng tại địa điểm này..." />
+                        </div>
+
+                        <!-- Văn hóa & Ẩm thực -->
+                        <div class="col-md-6">
+                            <label asp-for="VanHoa" class="form-label fw-bold text-dark"></label>
+                            <textarea asp-for="VanHoa" class="form-control" rows="3" placeholder="Đặc trưng văn hóa, lịch sử hình thành, con người..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DoAn" class="form-label fw-bold text-dark"></label>
+                            <textarea asp-for="DoAn" class="form-control" rows="3" placeholder="Món ngon đặc sản, nhà hàng nổi tiếng..."></textarea>
+                        </div>
+
+                        <div class="col-12 mt-4 text-end">
+                            <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                <i class="bi bi-save"></i> Lưu Địa Điểm Mới
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

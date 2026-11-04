@@ -53,6 +53,30 @@ namespace TravelWeb.Controllers
             return View(tours);
         }
 
+        // Form Gửi Liên Hệ & Hỗ Trợ (Dành cho Khách vãng lai / Khách hàng)
+        [HttpGet]
+        public IActionResult LienHe()
+        {
+            return View(new LienHe());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LienHe(LienHe model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.NgayGui = DateTime.Now;
+                model.TrangThai = "CHUA_XU_LY";
+                _context.LienHes.Add(model);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Cảm ơn bạn đã liên hệ! Bộ phận hỗ trợ của TravelWeb đã tiếp nhận và sẽ phản hồi sớm nhất.";
+                return RedirectToAction(nameof(LienHe));
+            }
+            return View(model);
+        }
+
         public IActionResult Privacy()
         {
             return View();
