@@ -46,10 +46,14 @@
         {
             foreach (var tour in Model)
             {
-                string anhSrc = string.IsNullOrEmpty(tour.HinhAnhPhong) ? "/images/dalat.webp" : (tour.HinhAnhPhong.StartsWith("/") ? tour.HinhAnhPhong : "/images/" + tour.HinhAnhPhong);
+                string anhSrc = string.IsNullOrEmpty(tour.HinhAnhPhong) 
+                    ? "/images/halong.jpg" 
+                    : (tour.HinhAnhPhong.StartsWith("http://") || tour.HinhAnhPhong.StartsWith("https://") 
+                        ? tour.HinhAnhPhong 
+                        : (tour.HinhAnhPhong.StartsWith("/") ? tour.HinhAnhPhong : "/images/" + tour.HinhAnhPhong));
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm border-0 position-relative">
-                        <img src="@anhSrc" class="card-img-top rounded-top" alt="@tour.TenDichVu" style="height: 210px; object-fit: cover;" onerror="this.src='/images/dalat.webp';">
+                        <img src="@anhSrc" class="card-img-top rounded-top" alt="@tour.TenDichVu" style="height: 210px; object-fit: cover;" onerror="this.src='/images/halong.jpg';">
                         
                         <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-1">
                             @if (tour.GiaKhuyenMai.HasValue && tour.GiaKhuyenMai.Value > 0)

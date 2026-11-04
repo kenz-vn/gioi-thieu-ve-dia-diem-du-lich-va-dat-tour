@@ -104,7 +104,10 @@
                             <div class="d-flex align-items-center mb-3">
                                 @if (!string.IsNullOrEmpty(Model.DichVu.HinhAnhPhong))
                                 {
-                                    <img src="~/images/@Model.DichVu.HinhAnhPhong" class="rounded me-3 shadow-sm" style="width: 90px; height: 65px; object-fit: cover;" onerror="this.src='/images/dalat.webp';" />
+                                    string tourImg = (Model.DichVu.HinhAnhPhong.StartsWith("http://") || Model.DichVu.HinhAnhPhong.StartsWith("https://"))
+                                        ? Model.DichVu.HinhAnhPhong
+                                        : (Model.DichVu.HinhAnhPhong.StartsWith("/") ? Model.DichVu.HinhAnhPhong : "/images/" + Model.DichVu.HinhAnhPhong);
+                                    <img src="@tourImg" class="rounded me-3 shadow-sm" style="width: 90px; height: 65px; object-fit: cover;" onerror="this.src='/images/halong.jpg';" />
                                 }
                                 <div>
                                     <h6 class="fw-bold mb-1">@Model.DichVu.TenDichVu</h6>

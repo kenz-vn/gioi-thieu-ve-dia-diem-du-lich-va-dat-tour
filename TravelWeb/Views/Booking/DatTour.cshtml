@@ -5,7 +5,14 @@
         <!-- CỘT 1: THÔNG TIN CHI TIẾT TOUR -->
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
-                <img src="~/@Model.HinhAnhPhong" class="card-img-top" alt="Ảnh tour" style="height: 300px; object-fit: cover;">
+                @{
+                    string tourImg = string.IsNullOrEmpty(Model.HinhAnhPhong) 
+                        ? "/images/dalat.jpg" 
+                        : (Model.HinhAnhPhong.StartsWith("http://") || Model.HinhAnhPhong.StartsWith("https://") 
+                            ? Model.HinhAnhPhong 
+                            : (Model.HinhAnhPhong.StartsWith("/") ? Model.HinhAnhPhong : "/images/" + Model.HinhAnhPhong));
+                }
+                <img src="@tourImg" class="card-img-top" alt="Ảnh tour" style="height: 300px; object-fit: cover;" onerror="this.src='/images/halong.jpg';">
                 <div class="card-body">
                     <h3 class="card-title text-primary">@Model.TenDichVu</h3>
                     <p class="text-muted"><i class="bi bi-geo-alt"></i> <strong>Địa điểm:</strong> @Model.DiaDiem?.TenDiaDiem - @Model.DiaDiem?.DiaChi</p>

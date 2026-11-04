@@ -63,7 +63,6 @@ namespace TravelWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DichVu model, IFormFile? fileAnh, string? anhCoSan)
         {
-            // NGHIỆP VỤ BẮT BUỘC THEO TIÊU CHÍ DL-13:
             // 1. Kiểm tra số chỗ còn lại không được âm
             if (model.SoChoConLai < 0)
             {

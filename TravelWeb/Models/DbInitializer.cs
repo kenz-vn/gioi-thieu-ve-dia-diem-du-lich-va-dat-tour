@@ -6,30 +6,86 @@ namespace TravelWeb.Models
 {
     public static class DbInitializer
     {
+        // Phiên bản seed data - tăng khi cần force reset dữ liệu
+        private const string SEED_VERSION = "v2.0-2026";
+        private const int EXPECTED_DANHMUC_COUNT = 4;
+        private const string EXPECTED_DANHMUC_FIRST = "Biển Đảo Nghỉ Dưỡng";
+
         public static void Initialize(ApplicationDbContext context)
         {
+            bool needReseed = false;
+
             try
             {
-                // Kiểm tra xem database và bảng DANH_GIA đã hoàn thiện chưa
-                if (context.DanhGias.Any())
+                // Tự động tạo cơ sở dữ liệu và toàn bộ các bảng nếu chưa tồn tại
+                context.Database.EnsureCreated();
+
+                // Kiểm tra xem dữ liệu seed hiện tại có đúng phiên bản không
+                if (context.DanhMucs.Any())
                 {
-                    return; // Đã có dữ liệu đầy đủ
+                    var firstDanhMuc = context.DanhMucs.OrderBy(d => d.MaDanhMuc).FirstOrDefault();
+                    int count = context.DanhMucs.Count();
+
+                    // Nếu số lượng hoặc nội dung danh mục không khớp → cần seed lại
+                    if (count != EXPECTED_DANHMUC_COUNT || firstDanhMuc?.TenDanhMuc != EXPECTED_DANHMUC_FIRST)
+                    {
+                        needReseed = true;
+                    }
+                    else
+                    {
+                        // Dữ liệu danh mục đã đúng chuẩn
+                        if (context.DanhGias.Any() || (context.DatLichs.Count() >= 5 && context.DiaDiems.Count() >= 6))
+                        {
+                            return; // DB đã có đầy đủ dữ liệu
+                        }
+                    }
                 }
             }
             catch
             {
-                // Nếu bị lỗi (do lần chạy trước DB bị tạo dở dang), xóa DB dở để tạo lại sạch sẽ
-                try
-                {
-                    context.Database.EnsureDeleted();
-                }
-                catch { }
+                // Nếu bị lỗi → xóa DB dở để tạo lại sạch
+                needReseed = true;
+                try { context.Database.EnsureDeleted(); } catch { }
             }
 
-            // Tự động tạo cơ sở dữ liệu và toàn bộ các bảng
-            context.Database.EnsureCreated();
+            // Nếu cần reset dữ liệu: xóa sạch và tạo lại
+            if (needReseed)
+            {
+                try
+                {
+                    // Xóa dữ liệu theo thứ tự phụ thuộc (tránh vi phạm FK)
+                    context.DanhGias.RemoveRange(context.DanhGias);
+                    context.SaveChanges();
+                    context.ThanhToans.RemoveRange(context.ThanhToans);
+                    context.SaveChanges();
+                    context.DatLichs.RemoveRange(context.DatLichs);
+                    context.SaveChanges();
+                    context.LienHes.RemoveRange(context.LienHes);
+                    context.SaveChanges();
+                    context.NhaCungCaps.RemoveRange(context.NhaCungCaps);
+                    context.SaveChanges();
+                    context.DichVus.RemoveRange(context.DichVus);
+                    context.SaveChanges();
+                    context.DiaDiems.RemoveRange(context.DiaDiems);
+                    context.SaveChanges();
+                    context.KhachHangs.RemoveRange(context.KhachHangs);
+                    context.SaveChanges();
+                    context.DanhMucs.RemoveRange(context.DanhMucs);
+                    context.SaveChanges();
+                }
+                catch
+                {
+                    // Nếu không xóa được bằng EF Core → xóa và tạo lại database
+                    try
+                    {
+                        context.Database.EnsureDeleted();
+                        context.Database.EnsureCreated();
+                    }
+                    catch { }
+                }
+            }
 
-            // Nếu đã có Danh mục thì coi như DB đã được seed
+            // Kiểm tra lại nếu vẫn còn danh mục thì không seed thêm
             if (context.DanhMucs.Any())
             {
                 return;
@@ -49,9 +105,9 @@ namespace TravelWeb.Models
             // 2. Thêm Tài khoản người dùng mẫu
             var khachHangs = new KhachHang[]
             {
-                new KhachHang { HoTen = "Nguyễn Quản Trị", Email = "admin@travelweb.vn", SoDienthoai = "0988111222", VaiTro = "ADMIN" },
-                new KhachHang { HoTen = "Bùi Trung Kiên", Email = "kien.bt@travelweb.vn", SoDienthoai = "0977222333", VaiTro = "NHAN_VIEN" },
-                new KhachHang { HoTen = "Trần Minh Hoàng", Email = "khachhang@gmail.com", SoDienthoai = "0912345678", VaiTro = "KHACH_HANG" }
+                new KhachHang { HoTen = "Nguyễn Quản Trị", Email = "admin@travelweb.vn", SoDienthoai = "0988111222", VaiTro = "ADMIN", MatKhauHash = "123456" },
+                new KhachHang { HoTen = "Bùi Trung Kiên", Email = "kien.bt@travelweb.vn", SoDienthoai = "0977222333", VaiTro = "NHAN_VIEN", MatKhauHash = "123456" },
+                new KhachHang { HoTen = "Trần Minh Hoàng", Email = "khachhang@gmail.com", SoDienthoai = "0912345678", VaiTro = "KHACH_HANG", MatKhauHash = "123456" }
             };
             context.KhachHangs.AddRange(khachHangs);
             context.SaveChanges();
@@ -90,7 +146,7 @@ namespace TravelWeb.Models
                     MaDanhMuc = danhMucs[2].MaDanhMuc,
                     Hotline = "0263.3555.777",
                     TrangThai = "HOAT_DONG",
-                    HinhAnh = "dalat.webp",
+                    HinhAnh = "dalat.jpg",
                     VanHoa = "Kiến trúc Pháp cổ kính xen lẫn không gian hoa cỏ lãng mạn cao nguyên.",
                     DoAn = "Lẩu gà lá é, Bánh tráng nướng, Kem bơ Thanh Thảo, Dâu tây Đà Lạt.",
                     NoiCanToi = "Hồ Xuân Hương, Thung Lũng Tình Yêu, Đỉnh Langbiang, Vườn hoa thành phố."
@@ -114,7 +170,7 @@ namespace TravelWeb.Models
                     MaDanhMuc = danhMucs[0].MaDanhMuc,
                     Hotline = "0258.3888.555",
                     TrangThai = "HOAT_DONG",
-                    HinhAnh = "nhatrang.avif",
+                    HinhAnh = "nhatrang.jpg",
                     VanHoa = "Nền văn hóa Chăm pa cổ kính gắn với Tháp Bà Ponagar linh thiêng.",
                     DoAn = "Nem nướng Ninh Hòa, Bún sứa Nha Trang, Bánh căn hải sản.",
                     NoiCanToi = "VinWonders Nha Trang, Hòn Mun, Tháp Bà Ponagar, Viện Hải dương học."
@@ -145,7 +201,7 @@ namespace TravelWeb.Models
                     GiaTien = 3500000,
                     GiaKhuyenMai = 2990000,
                     TyLeCoc = 30,
-                    HinhAnhPhong = "danang.webp",
+                    HinhAnhPhong = "danang.jpg",
                     SoChoToiDa = 30,
                     SoChoConLai = 12,
                     TrangThaiTour = "DANG_BAN",
@@ -187,7 +243,7 @@ namespace TravelWeb.Models
                     GiaTien = 2500000,
                     GiaKhuyenMai = 2190000,
                     TyLeCoc = 30,
-                    HinhAnhPhong = "dalat.webp",
+                    HinhAnhPhong = "dalat.jpg",
                     SoChoToiDa = 25,
                     SoChoConLai = 5,
                     TrangThaiTour = "DANG_BAN",
@@ -201,7 +257,7 @@ namespace TravelWeb.Models
                     GiaTien = 950000,
                     GiaKhuyenMai = 790000,
                     TyLeCoc = 50,
-                    HinhAnhPhong = "nhatrang.avif",
+                    HinhAnhPhong = "nhatrang.jpg",
                     SoChoToiDa = 40,
                     SoChoConLai = 0,
                     TrangThaiTour = "HET_CHO",

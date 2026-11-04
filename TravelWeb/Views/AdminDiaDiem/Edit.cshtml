@@ -56,7 +56,10 @@
                                     <div class="col-md-3 text-center">
                                         @if (!string.IsNullOrEmpty(Model.HinhAnh))
                                         {
-                                            <img src="~/images/@Model.HinhAnh" class="img-thumbnail shadow-sm mb-2" style="max-height: 120px; object-fit: cover;" alt="@Model.TenDiaDiem" onerror="this.src='/images/dalat.webp';" />
+                                            string diaDiemImg = (Model.HinhAnh.StartsWith("http://") || Model.HinhAnh.StartsWith("https://"))
+                                                ? Model.HinhAnh
+                                                : (Model.HinhAnh.StartsWith("/") ? Model.HinhAnh : "/images/" + Model.HinhAnh);
+                                            <img src="@diaDiemImg" class="img-thumbnail shadow-sm mb-2" style="max-height: 120px; object-fit: cover;" alt="@Model.TenDiaDiem" onerror="this.src='/images/halong.jpg';" />
                                             <div class="small text-muted">@Model.HinhAnh</div>
                                         }
                                         else

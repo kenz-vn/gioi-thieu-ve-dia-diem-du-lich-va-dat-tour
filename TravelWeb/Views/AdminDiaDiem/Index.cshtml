@@ -76,7 +76,10 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.HinhAnh))
                                 {
-                                    <img src="~/images/@item.HinhAnh" class="rounded shadow-sm" style="width: 80px; height: 60px; object-fit: cover;" alt="@item.TenDiaDiem" onerror="this.src='/images/dalat.webp';" />
+                                    string diaDiemImg = (item.HinhAnh.StartsWith("http://") || item.HinhAnh.StartsWith("https://"))
+                                        ? item.HinhAnh
+                                        : (item.HinhAnh.StartsWith("/") ? item.HinhAnh : "/images/" + item.HinhAnh);
+                                    <img src="@diaDiemImg" class="rounded shadow-sm" style="width: 80px; height: 60px; object-fit: cover;" alt="@item.TenDiaDiem" onerror="this.src='/images/halong.jpg';" />
                                 }
                                 else
                                 {
