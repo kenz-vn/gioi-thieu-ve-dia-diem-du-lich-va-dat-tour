@@ -22,7 +22,7 @@ namespace TravelWeb.Models
         public string TenDichVu { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Vui lòng nhập giá tiền")]
-        [Range(0, 1000000000, ErrorMessage = "Giá tiền phải từ 0 trở lên")]
+        [Range(0, double.MaxValue, ErrorMessage = "Giá tiền phải từ 0 trở lên")]
         [Column("gia_tien", TypeName = "decimal(18,2)")]
         [Display(Name = "Giá gốc (VNĐ)")]
         public decimal GiaTien { get; set; }
@@ -57,10 +57,32 @@ namespace TravelWeb.Models
         [Display(Name = "Lịch trình chi tiết")]
         public string? LichTrinh { get; set; }
 
-        [Range(0, 1000000000, ErrorMessage = "Giá khuyến mãi phải lớn hơn hoặc bằng 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Giá khuyến mãi phải lớn hơn hoặc bằng 0")]
         [Column("gia_khuyen_mai", TypeName = "decimal(18,2)")]
         [Display(Name = "Giá khuyến mãi (VNĐ)")]
         public decimal? GiaKhuyenMai { get; set; }
+
+        [Column("gia_tre_em", TypeName = "decimal(18,2)")]
+        [Display(Name = "Giá vé trẻ em (VNĐ)")]
+        public decimal? GiaTreEm { get; set; }
+
+        [MaxLength(255)]
+        [Column("diem_bat_dau")]
+        [Display(Name = "Điểm bắt đầu")]
+        public string? DiemBatDau { get; set; }
+
+        [MaxLength(255)]
+        [Column("diem_ket_thuc")]
+        [Display(Name = "Điểm kết thúc")]
+        public string? DiemKetThuc { get; set; }
+
+        [Column("thong_tin_chang")]
+        [Display(Name = "Thông tin các chặng")]
+        public string? ThongTinChang { get; set; }
+
+        [Column("thong_tin_khach_san")]
+        [Display(Name = "Thông tin khách sạn")]
+        public string? ThongTinKhachSan { get; set; }
 
         [MaxLength(100)]
         [Column("thoi_luong")]

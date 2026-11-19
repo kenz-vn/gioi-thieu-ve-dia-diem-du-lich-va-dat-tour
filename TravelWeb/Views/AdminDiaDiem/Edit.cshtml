@@ -5,28 +5,34 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-10">
+    <div class="col-lg-11">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h3 class="fw-bold text-primary mb-1"><i class="bi bi-pencil-square"></i> Chỉnh Sửa Địa Điểm Du Lịch</h3>
-                <span class="badge bg-primary">Task DL-09: Quản trị Địa Điểm & Hình Ảnh (Kiên)</span>
+                <span class="badge bg-primary">Phân chia theo chặng, nơi bắt đầu/kết thúc & tự động tổng hợp chi phí + 15% lợi nhuận</span>
             </div>
             <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
         </div>
 
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <form id="formEditDiaDiem" asp-action="Edit" method="post" enctype="multipart/form-data">
                     <input type="hidden" asp-for="MaDiaDiem" />
                     <input type="hidden" asp-for="HinhAnh" />
                     <input type="hidden" asp-for="MaChuSoHuu" />
+                    <input type="hidden" asp-for="ThongTinChang" id="inputThongTinChang" />
 
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                    <div class="row g-3">
+                    <!-- PHẦN 1: THÔNG TIN CHUNG -->
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                        <i class="bi bi-geo-alt-fill"></i> 1. Thông Tin Chung Địa Điểm
+                    </h5>
+
+                    <div class="row g-3 mb-4">
                         <div class="col-md-8">
                             <label asp-for="TenDiaDiem" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
-                            <input asp-for="TenDiaDiem" class="form-control" />
+                            <input asp-for="TenDiaDiem" class="form-control" required />
                             <span asp-validation-for="TenDiaDiem" class="text-danger small"></span>
                         </div>
 
@@ -36,9 +42,28 @@
                             <span asp-validation-for="MaDanhMuc" class="text-danger small"></span>
                         </div>
 
+                        <!-- ĐIỂM BẮT ĐẦU VÀ KẾT THÚC DO ADMIN TỰ ĐIỀN -->
+                        <div class="col-md-6">
+                            <label asp-for="DiemBatDau" class="form-label fw-bold text-dark">
+                                <i class="bi bi-pin-map-fill text-success"></i> Nơi bắt đầu / Điểm xuất phát:
+                            </label>
+                            <input asp-for="DiemBatDau" class="form-control" placeholder="Ví dụ: Trung tâm TP. Hà Nội, Cảng tàu..." />
+                            <div class="form-text small">Admin tự nhập điểm nơi bắt đầu.</div>
+                            <span asp-validation-for="DiemBatDau" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DiemKetThuc" class="form-label fw-bold text-dark">
+                                <i class="bi bi-flag-fill text-danger"></i> Nơi kết thúc / Điểm đến chặng cuối:
+                            </label>
+                            <input asp-for="DiemKetThuc" class="form-control" placeholder="Ví dụ: Bến phà Tuần Châu, Đảo Ti Tốp..." />
+                            <div class="form-text small">Admin tự nhập điểm kết thúc hành trình.</div>
+                            <span asp-validation-for="DiemKetThuc" class="text-danger small"></span>
+                        </div>
+
                         <div class="col-md-8">
                             <label asp-for="DiaChi" class="form-label fw-bold text-dark"></label> <span class="text-danger">*</span>
-                            <input asp-for="DiaChi" class="form-control" />
+                            <input asp-for="DiaChi" class="form-control" required />
                             <span asp-validation-for="DiaChi" class="text-danger small"></span>
                         </div>
 
@@ -110,13 +135,54 @@
                             <label asp-for="DoAn" class="form-label fw-bold text-dark"></label>
                             <textarea asp-for="DoAn" class="form-control" rows="3"></textarea>
                         </div>
+                    </div>
 
-                        <div class="col-12 mt-4 text-end">
-                            <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary px-4 fw-bold">
-                                <i class="bi bi-save"></i> Cập Nhật Thay Đổi
+                    <!-- PHẦN 2: CHIA THEO CHẶNG, ĂN Ở VÀ TỔNG HỢP GIÁ NHÂN 15% LỢI NHUẬN -->
+                    <div class="card border-primary bg-light mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-diagram-3-fill"></i> <strong>2. Phân Chia Các Chặng Của Địa Điểm (Chỗ Ăn, Chỗ Ở & Giá Từng Chặng)</strong>
+                            </div>
+                            <button type="button" class="btn btn-light btn-sm fw-bold text-primary" onclick="themChangMoi()">
+                                <i class="bi bi-plus-circle"></i> Thêm Chặng
                             </button>
                         </div>
+                        <div class="card-body bg-white">
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-info-circle"></i> Admin nhập các chặng tham quan liên quan tới địa điểm này. Hệ thống tự động tính tổng chi phí các chặng và <strong>nhân 15% lợi nhuận</strong> để ra tổng giá ước tính.
+                            </p>
+
+                            <!-- DANH SÁCH CÁC CHẶNG DYNAMIC -->
+                            <div id="danhSachChangContainer">
+                                <!-- Render bằng JS -->
+                            </div>
+
+                            <!-- BẢNG TỔNG HỢP GIÁ CÁC CHẶNG & 15% LỢI NHUẬN -->
+                            <div class="card bg-light border-success mt-3 p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 text-center border-end">
+                                        <span class="text-muted small d-block">Tổng chi phí các chặng:</span>
+                                        <strong id="lblTongChiPhiChang" class="fs-5 text-dark">0 VNĐ</strong>
+                                    </div>
+                                    <div class="col-md-4 text-center border-end">
+                                        <span class="text-muted small d-block">Lợi nhuận dự tính (15%):</span>
+                                        <strong id="lblLoiNhuan15" class="fs-5 text-success">+0 VNĐ</strong>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <span class="text-muted small d-block fw-bold text-primary">Tổng giá chung (+15% lợi nhuận):</span>
+                                        <strong id="lblGiaTongHop" class="fs-4 text-danger">0 VNĐ</strong>
+                                        <input type="hidden" asp-for="GiaUocTinh" id="inputGiaUocTinh" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4 text-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold">
+                            <i class="bi bi-save"></i> Cập Nhật Thay Đổi
+                        </button>
                     </div>
                 </form>
             </div>
@@ -126,4 +192,115 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        let rawChangJson = `@Html.Raw(Model.ThongTinChang ?? "")`;
+        let danhSachChang = [];
+
+        try {
+            if (rawChangJson && rawChangJson.trim() !== "") {
+                danhSachChang = JSON.parse(rawChangJson);
+            }
+        } catch (e) {
+            console.error("Lỗi parse JSON chặng:", e);
+        }
+
+        if (!Array.isArray(danhSachChang) || danhSachChang.length === 0) {
+            danhSachChang = [
+                { ThuTu: 1, TenChang: "Chặng 1: Điểm khởi đầu & Khu vực trung tâm", ChoAn: "Ẩm thực đặc sản", ChoO: "Khách sạn trung tâm", GiaTien: 800000 },
+                { ThuTu: 2, TenChang: "Chặng 2: Khu vực tham quan mở rộng", ChoAn: "Nhà hàng đặc sản", ChoO: "Resort / Homestay lưu trú", GiaTien: 1000000 }
+            ];
+        }
+
+        function renderDanhSachChang() {
+            const container = document.getElementById("danhSachChangContainer");
+            container.innerHTML = "";
+
+            danhSachChang.forEach((chang, idx) => {
+                const card = document.createElement("div");
+                card.className = "card border mb-3 p-3 rounded shadow-sm bg-white";
+                card.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-geo-alt-fill"></i> Chặng ${idx + 1}</h6>
+                        ${danhSachChang.length > 1 ? `<button type="button" class="btn btn-outline-danger btn-sm py-0" onclick="xoaChang(${idx})"><i class="bi bi-trash"></i> Xóa chặng</button>` : ''}
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Tên chặng / Điểm đến:</label>
+                            <input type="text" class="form-control form-control-sm" value="${chang.TenChang || ''}" onchange="capNhatChang(${idx}, 'TenChang', this.value)" placeholder="Ví dụ: Chặng 1: Khu phố cổ" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Giá tiền chặng (VNĐ):</label>
+                            <input type="number" class="form-control form-control-sm fw-bold text-danger" value="${chang.GiaTien || 0}" min="0" step="10000" oninput="capNhatChang(${idx}, 'GiaTien', parseFloat(this.value) || 0)" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold"><i class="bi bi-egg-fried text-warning"></i> Chỗ ăn (ẩm thực, nhà hàng):</label>
+                            <input type="text" class="form-control form-control-sm" value="${chang.ChoAn || ''}" onchange="capNhatChang(${idx}, 'ChoAn', this.value)" placeholder="Thông tin ăn uống của chặng..." />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold"><i class="bi bi-house-door-fill text-success"></i> Chỗ ở (khách sạn, nơi nghỉ):</label>
+                            <input type="text" class="form-control form-control-sm" value="${chang.ChoO || ''}" onchange="capNhatChang(${idx}, 'ChoO', this.value)" placeholder="Thông tin khách sạn lưu trú..." />
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            tinhToanGiaTongHop();
+        }
+
+        function themChangMoi() {
+            danhSachChang.push({
+                ThuTu: danhSachChang.length + 1,
+                TenChang: `Chặng ${danhSachChang.length + 1}: Điểm tham quan tiếp theo`,
+                ChoAn: "Nhà hàng ẩm thực",
+                ChoO: "Khách sạn tiêu chuẩn",
+                GiaTien: 500000
+            });
+            renderDanhSachChang();
+        }
+
+        function xoaChang(idx) {
+            danhSachChang.splice(idx, 1);
+            danhSachChang.forEach((c, i) => c.ThuTu = i + 1);
+            renderDanhSachChang();
+        }
+
+        function capNhatChang(idx, field, val) {
+            danhSachChang[idx][field] = val;
+            if (field === 'GiaTien') {
+                tinhToanGiaTongHop();
+            }
+            luuJsonChang();
+        }
+
+        function tinhToanGiaTongHop() {
+            let tongChiPhi = 0;
+            danhSachChang.forEach(c => tongChiPhi += (parseFloat(c.GiaTien) || 0));
+
+            const loiNhuan = Math.round(tongChiPhi * 0.15);
+            const giaTongHop = Math.round(tongChiPhi * 1.15);
+
+            document.getElementById("lblTongChiPhiChang").innerText = tongChiPhi.toLocaleString('vi-VN') + " VNĐ";
+            document.getElementById("lblLoiNhuan15").innerText = "+" + loiNhuan.toLocaleString('vi-VN') + " VNĐ";
+            document.getElementById("lblGiaTongHop").innerText = giaTongHop.toLocaleString('vi-VN') + " VNĐ";
+            document.getElementById("inputGiaUocTinh").value = giaTongHop;
+
+            luuJsonChang();
+            return giaTongHop;
+        }
+
+        function luuJsonChang() {
+            document.getElementById("inputThongTinChang").value = JSON.stringify(danhSachChang);
+        }
+
+        document.getElementById("formEditDiaDiem").addEventListener("submit", function() {
+            luuJsonChang();
+            tinhToanGiaTongHop();
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderDanhSachChang();
+        });
+    </script>
 }

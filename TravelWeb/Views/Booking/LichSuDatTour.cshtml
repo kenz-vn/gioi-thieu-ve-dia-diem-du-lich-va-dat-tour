@@ -78,8 +78,21 @@
                                         <div class="small text-muted"><i class="bi bi-geo-alt"></i> @item.DichVu.DiaDiem.TenDiaDiem</div>
                                     }
                                 </td>
-                                <td><span class="fw-bold">@item.NgayThamQuan.ToString("dd/MM/yyyy")</span></td>
-                                <td>@item.SoLuongKhach người</td>
+                                <td>
+                                    <span class="fw-bold">@item.NgayThamQuan.ToString("dd/MM/yyyy")</span>
+                                    @if (item.NgayCheckOut.HasValue)
+                                    {
+                                        <div class="small text-muted">Out: @item.NgayCheckOut.Value.ToString("dd/MM/yyyy")</div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="fw-bold">@item.SoLuongKhach người</span>
+                                    <div class="small text-muted">(@item.SoLuongNguoiLon NL, @item.SoLuongTreEm TE)</div>
+                                    @if (!string.IsNullOrEmpty(item.LoaiPhong))
+                                    {
+                                        <div class="small text-primary"><i class="bi bi-door-closed"></i> @item.SoLuongPhong phòng</div>
+                                    }
+                                </td>
                                 <td><strong class="text-danger">@item.SoTienCoc.ToString("N0") VNĐ</strong></td>
                                 <td>
                                     @if (item.TrangThaiDat == "CHO_XAC_NHAN")

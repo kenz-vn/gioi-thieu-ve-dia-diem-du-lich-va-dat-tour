@@ -36,10 +36,41 @@
                         <div>
                             <h4 class="fw-bold text-primary mb-2">@Model.DichVu?.TenDichVu</h4>
                             <p class="mb-1 text-muted"><i class="bi bi-geo-alt-fill text-danger"></i> <strong>Địa điểm:</strong> @Model.DichVu?.DiaDiem?.TenDiaDiem - @Model.DichVu?.DiaDiem?.DiaChi</p>
+                            @if (!string.IsNullOrEmpty(Model.DichVu?.DiemBatDau) || !string.IsNullOrEmpty(Model.DichVu?.DiemKetThuc))
+                            {
+                                <p class="mb-1 text-muted"><i class="bi bi-signpost-split-fill text-success"></i> <strong>Lộ trình:</strong> @(Model.DichVu?.DiemBatDau ?? "Điểm khởi hành") &rarr; @(Model.DichVu?.DiemKetThuc ?? "Điểm đến")</p>
+                            }
                             <p class="mb-1 text-muted"><i class="bi bi-clock-history text-info"></i> <strong>Thời lượng:</strong> @(Model.DichVu?.ThoiLuong ?? "Theo lịch trình")</p>
-                            <p class="mb-0 text-muted"><i class="bi bi-calendar-event text-success"></i> <strong>Ngày khởi hành:</strong> <span class="fw-bold text-dark">@Model.NgayThamQuan.ToString("dd/MM/yyyy")</span></p>
+                            <p class="mb-1 text-muted"><i class="bi bi-calendar-event text-success"></i> <strong>Thời gian Check-in:</strong> <span class="fw-bold text-dark">@(Model.NgayCheckIn?.ToString("dd/MM/yyyy") ?? Model.NgayThamQuan.ToString("dd/MM/yyyy"))</span></p>
+                            @if (Model.NgayCheckOut.HasValue)
+                            {
+                                <p class="mb-0 text-muted"><i class="bi bi-calendar-check text-primary"></i> <strong>Thời gian Check-out:</strong> <span class="fw-bold text-dark">@Model.NgayCheckOut.Value.ToString("dd/MM/yyyy")</span></p>
+                            }
                         </div>
                     </div>
+
+                    <!-- THÔNG TIN LƯU TRÚ KHÁCH SẠN -->
+                    @if (!string.IsNullOrEmpty(Model.TenKhachSan) || !string.IsNullOrEmpty(Model.LoaiPhong))
+                    {
+                        <div class="mt-3 p-3 bg-light rounded border">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-building text-primary"></i> Thông Tin Khách Sạn & Phòng Nghỉ Đã Đặt:</h6>
+                            <div class="row g-2 small">
+                                <div class="col-md-6">
+                                    <span class="text-muted">Khách sạn:</span>
+                                    <div class="fw-bold text-dark">@(Model.TenKhachSan ?? "Khách sạn theo tiêu chuẩn tour")</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <span class="text-muted">Loại phòng / Giường:</span>
+                                    <div class="fw-bold text-dark">@(Model.LoaiPhong ?? "Phòng 2 người (Giường đôi)")</div>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <span class="badge bg-primary fs-6 px-3 py-2">
+                                        <i class="bi bi-door-closed-fill"></i> Số phòng khách hàng đặt: <strong>@Model.SoLuongPhong phòng</strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -106,15 +137,29 @@
 
                     <ul class="list-group list-group-flush mb-3">
                         <li class="list-group-item d-flex justify-content-between px-0">
-                            <span>Số lượng khách:</span>
-                            <span class="fw-bold">@Model.SoLuongKhach người</span>
+                            <span>Người lớn:</span>
+                            <span class="fw-bold">@Model.SoLuongNguoiLon người</span>
                         </li>
+                        @if (Model.SoLuongTreEm > 0)
+                        {
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span>Trẻ em (&lt;12t):</span>
+                                <span class="fw-bold text-success">@Model.SoLuongTreEm trẻ</span>
+                            </li>
+                        }
                         <li class="list-group-item d-flex justify-content-between px-0">
-                            <span>Giá tour/khách:</span>
-                            <span class="fw-bold">@((Model.DichVu?.GiaKhuyenMai ?? Model.DichVu?.GiaTien ?? 0).ToString("N0")) VNĐ</span>
+                            <span>Tổng số khách:</span>
+                            <span class="fw-bold text-primary">@Model.SoLuongKhach người</span>
                         </li>
+                        @if (Model.TongTien > 0)
+                        {
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span>Tổng tiền tour:</span>
+                                <span class="fw-bold text-dark">@Model.TongTien.ToString("N0") VNĐ</span>
+                            </li>
+                        }
                         <li class="list-group-item d-flex justify-content-between px-0 bg-light p-2 rounded">
-                            <span class="fw-bold text-primary">Tiền cọc cần thanh toán:</span>
+                            <span class="fw-bold text-primary">Tiền cọc giữ chỗ:</span>
                             <span class="fw-bold text-danger fs-5">@Model.SoTienCoc.ToString("N0") VNĐ</span>
                         </li>
                     </ul>

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace TravelWeb.Models
@@ -19,6 +20,9 @@ namespace TravelWeb.Models
             {
                 // Tự động tạo cơ sở dữ liệu và toàn bộ các bảng nếu chưa tồn tại
                 context.Database.EnsureCreated();
+
+                // Đảm bảo các cột mới cập nhật được thêm vào bảng nếu DB đã tồn tại
+                EnsureSchemaUpdated(context);
 
                 // Kiểm tra xem dữ liệu seed hiện tại có đúng phiên bản không
                 if (context.DanhMucs.Any())
@@ -41,9 +45,14 @@ namespace TravelWeb.Models
                     }
                 }
             }
+            catch (SqlException)
+            {
+                // Lỗi kết nối CSDL (SQL Server chưa sẵn sàng) -> ném ra ngoài để retry
+                throw;
+            }
             catch
             {
-                // Nếu bị lỗi → xóa DB dở để tạo lại sạch
+                // Nếu bị lỗi khác (schema cũ không khớp) → xóa DB dở để tạo lại sạch
                 needReseed = true;
                 try { context.Database.EnsureDeleted(); } catch { }
             }
@@ -200,6 +209,10 @@ namespace TravelWeb.Models
                     MaDiaDiem = diaDiems[0].MaDiaDiem,
                     GiaTien = 3500000,
                     GiaKhuyenMai = 2990000,
+                    GiaTreEm = 1750000,
+                    DiemBatDau = "Hà Nội / TP.HCM",
+                    DiemKetThuc = "Đà Nẵng - Bà Nà Hills",
+                    ThongTinChang = "[{\"ThuTu\":1,\"TenChang\":\"Chặng 1: Đón đoàn & Sơn Trà - Biển Mỹ Khê\",\"ChoAn\":\"Nhà hàng Hải sản Bé Mặn Mỹ Khê\",\"ChoO\":\"Khách sạn Mường Thanh Grand Đà Nẵng (4 sao)\",\"GiaTien\":1000000},{\"ThuTu\":2,\"TenChang\":\"Chặng 2: Khám phá Bà Nà Hills & Cầu Vàng\",\"ChoAn\":\"Buffet quốc tế trên đỉnh Bà Nà\",\"ChoO\":\"Khách sạn Mercure Danang French Village\",\"GiaTien\":1500000},{\"ThuTu\":3,\"TenChang\":\"Chặng 3: Ngũ Hành Sơn & Tiễn đoàn\",\"ChoAn\":\"Đặc sản Mì Quảng Ếch Bếp Trang\",\"ChoO\":\"Không lưu trú (tiễn sân bay)\",\"GiaTien\":543478}]",
                     TyLeCoc = 30,
                     HinhAnhPhong = "danang.jpg",
                     SoChoToiDa = 30,
@@ -214,6 +227,10 @@ namespace TravelWeb.Models
                     MaDiaDiem = diaDiems[1].MaDiaDiem,
                     GiaTien = 2800000,
                     GiaKhuyenMai = 2450000,
+                    GiaTreEm = 1400000,
+                    DiemBatDau = "Hà Nội (Nhà Hát Lớn)",
+                    DiemKetThuc = "Cảng Tuần Châu - Vịnh Hạ Long",
+                    ThongTinChang = "[{\"ThuTu\":1,\"TenChang\":\"Chặng 1: Hà Nội - Tuần Châu - Lên Du Thuyền\",\"ChoAn\":\"Tiệc buffet hải sản thượng hạng trên du thuyền\",\"ChoO\":\"Cabin ban công riêng Du thuyền Paradise 5 sao\",\"GiaTien\":1600000},{\"ThuTu\":2,\"TenChang\":\"Chặng 2: Khám phá Hang Sửng Sốt & Về cảng\",\"ChoAn\":\"Bữa sáng nhẹ phong cách Âu & Set menu trưa\",\"ChoO\":\"Trả phòng du thuyền lúc 11:30\",\"GiaTien\":834782}]",
                     TyLeCoc = 30,
                     HinhAnhPhong = "halong.jpg",
                     SoChoToiDa = 24,
@@ -228,6 +245,10 @@ namespace TravelWeb.Models
                     MaDiaDiem = diaDiems[3].MaDiaDiem,
                     GiaTien = 2200000,
                     GiaKhuyenMai = null,
+                    GiaTreEm = 1100000,
+                    DiemBatDau = "Hà Nội",
+                    DiemKetThuc = "Thị trấn Sapa - Đỉnh Fansipan",
+                    ThongTinChang = "[{\"ThuTu\":1,\"TenChang\":\"Chặng 1: Xe Limousine Hà Nội - Sapa & Bản Cát Cát\",\"ChoAn\":\"Lẩu cá hồi Sapa & Đồ nướng phố cổ\",\"ChoO\":\"Khách sạn Bamboo Sapa Hotel (4 sao view núi)\",\"GiaTien\":1100000},{\"ThuTu\":2,\"TenChang\":\"Chặng 2: Cáp treo Fansipan & Mua sắm chợ Sapa\",\"ChoAn\":\"Buffet Vân Sam trên đỉnh Fansipan\",\"ChoO\":\"Không lưu trú (lên xe về Hà Nội)\",\"GiaTien\":813043}]",
                     TyLeCoc = 30,
                     HinhAnhPhong = "sapa.jpg",
                     SoChoToiDa = 35,
@@ -491,6 +512,56 @@ namespace TravelWeb.Models
             };
             context.NhaCungCaps.AddRange(nhaCungCaps);
             context.SaveChanges();
+        }
+
+        private static void EnsureSchemaUpdated(ApplicationDbContext context)
+        {
+            try
+            {
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DICH_VU') AND name = 'gia_tre_em')
+                        ALTER TABLE DICH_VU ADD gia_tre_em decimal(18,2) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DICH_VU') AND name = 'diem_bat_dau')
+                        ALTER TABLE DICH_VU ADD diem_bat_dau nvarchar(255) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DICH_VU') AND name = 'diem_ket_thuc')
+                        ALTER TABLE DICH_VU ADD diem_ket_thuc nvarchar(255) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DICH_VU') AND name = 'thong_tin_chang')
+                        ALTER TABLE DICH_VU ADD thong_tin_chang nvarchar(max) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DICH_VU') AND name = 'thong_tin_khach_san')
+                        ALTER TABLE DICH_VU ADD thong_tin_khach_san nvarchar(max) NULL;
+
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DIA_DIEM') AND name = 'diem_bat_dau')
+                        ALTER TABLE DIA_DIEM ADD diem_bat_dau nvarchar(255) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DIA_DIEM') AND name = 'diem_ket_thuc')
+                        ALTER TABLE DIA_DIEM ADD diem_ket_thuc nvarchar(255) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DIA_DIEM') AND name = 'thong_tin_chang')
+                        ALTER TABLE DIA_DIEM ADD thong_tin_chang nvarchar(max) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DIA_DIEM') AND name = 'gia_uoc_tinh')
+                        ALTER TABLE DIA_DIEM ADD gia_uoc_tinh decimal(18,2) NULL;
+
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'so_luong_nguoi_lon')
+                        ALTER TABLE DAT_LICH ADD so_luong_nguoi_lon int NOT NULL DEFAULT 1;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'so_luong_tre_em')
+                        ALTER TABLE DAT_LICH ADD so_luong_tre_em int NOT NULL DEFAULT 0;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'ngay_check_in')
+                        ALTER TABLE DAT_LICH ADD ngay_check_in datetime2 NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'ngay_check_out')
+                        ALTER TABLE DAT_LICH ADD ngay_check_out datetime2 NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'ten_khach_san')
+                        ALTER TABLE DAT_LICH ADD ten_khach_san nvarchar(255) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'loai_phong')
+                        ALTER TABLE DAT_LICH ADD loai_phong nvarchar(100) NULL;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'so_luong_phong')
+                        ALTER TABLE DAT_LICH ADD so_luong_phong int NOT NULL DEFAULT 1;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'gia_nguoi_lon')
+                        ALTER TABLE DAT_LICH ADD gia_nguoi_lon decimal(18,2) NOT NULL DEFAULT 0;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'gia_tre_em')
+                        ALTER TABLE DAT_LICH ADD gia_tre_em decimal(18,2) NOT NULL DEFAULT 0;
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('DAT_LICH') AND name = 'tong_tien')
+                        ALTER TABLE DAT_LICH ADD tong_tien decimal(18,2) NOT NULL DEFAULT 0;
+                ");
+            }
+            catch { }
         }
     }
 }

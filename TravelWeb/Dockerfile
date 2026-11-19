@@ -1,19 +1,31 @@
-# ==========================================
-# DOCKERFILE CHO WEBSITE DU LICH (TRAVELWEB)
-# ==========================================
+# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-# Giai doan 1: Bien dich ma nguon
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-COPY ["TravelWeb.csproj", "./"]
-RUN dotnet restore "TravelWeb.csproj"
-COPY . .
-RUN dotnet publish "TravelWeb.csproj" -c Release -o /app/publish
-
-# Giai doan 2: Moi truong runtime gon nhe
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+# This stage is used when running from VS in fast mode (Default for Debug configuration)
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+USER $APP_UID
 WORKDIR /app
-COPY --from=build /app/publish .
-EXPOSE 5230
-ENV ASPNETCORE_URLS=http://+:5230
+EXPOSE 8080
+EXPOSE 8081
+
+
+# This stage is used to build the service project
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["TravelWeb.csproj", "."]
+RUN dotnet restore "./TravelWeb.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "./TravelWeb.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# This stage is used to publish the service project to be copied to the final stage
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./TravelWeb.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+FROM base AS final
+WORKDIR /app
+COPY --from=publish --chown=$APP_UID:$APP_UID /app/publish .
+USER $APP_UID
 ENTRYPOINT ["dotnet", "TravelWeb.dll"]

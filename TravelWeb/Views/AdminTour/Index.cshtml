@@ -98,6 +98,10 @@
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">@item.TenDichVu</div>
+                                @if (!string.IsNullOrEmpty(item.DiemBatDau) || !string.IsNullOrEmpty(item.DiemKetThuc))
+                                {
+                                    <div class="small text-primary"><i class="bi bi-signpost-2"></i> @(item.DiemBatDau ?? "Điểm đi") &rarr; @(item.DiemKetThuc ?? "Điểm đến")</div>
+                                }
                                 <div class="small text-muted"><i class="bi bi-clock"></i> @(item.ThoiLuong ?? "3N2Đ") | Cọc: @item.TyLeCoc%</div>
                                 @if (!string.IsNullOrEmpty(item.LichTrinh))
                                 {
@@ -122,7 +126,11 @@
                                 }
                                 else
                                 {
-                                    <strong class="text-dark">@item.GiaTien.ToString("N0") đ</strong>
+                                    <div><strong class="text-dark">@item.GiaTien.ToString("N0") đ</strong></div>
+                                }
+                                @if (item.GiaTreEm.HasValue && item.GiaTreEm.Value > 0)
+                                {
+                                    <div class="small text-success"><i class="bi bi-person-heart"></i> Trẻ em: @item.GiaTreEm.Value.ToString("N0") đ</div>
                                 }
                             </td>
                             <td>

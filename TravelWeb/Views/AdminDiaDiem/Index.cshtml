@@ -90,6 +90,14 @@
                             </td>
                             <td>
                                 <div class="fw-bold text-dark">@item.TenDiaDiem</div>
+                                @if (!string.IsNullOrEmpty(item.DiemBatDau) || !string.IsNullOrEmpty(item.DiemKetThuc))
+                                {
+                                    <div class="small text-primary"><i class="bi bi-signpost-split"></i> @(item.DiemBatDau ?? "Bắt đầu") &rarr; @(item.DiemKetThuc ?? "Kết thúc")</div>
+                                }
+                                @if (item.GiaUocTinh.HasValue && item.GiaUocTinh.Value > 0)
+                                {
+                                    <div class="small text-success"><i class="bi bi-cash-coin"></i> Giá chặng (+15%): <strong>@item.GiaUocTinh.Value.ToString("N0") đ</strong></div>
+                                }
                                 <div class="small text-muted text-truncate" style="max-width: 280px;" title="@item.NoiCanToi">
                                     <i class="bi bi-pin-map"></i> @(string.IsNullOrEmpty(item.NoiCanToi) ? "Chưa cập nhật điểm đến" : item.NoiCanToi)
                                 </div>
