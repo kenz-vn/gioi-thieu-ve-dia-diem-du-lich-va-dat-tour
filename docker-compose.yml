@@ -1,29 +1,38 @@
-services:
-  # 1. Container CSDL SQL Server 2022
+﻿services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: travelweb_sqlserver
+    container_name: travelweb-sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=YourStrong@Password123
+      - MSSQL_SA_PASSWORD=TravelWeb@2026!
     ports:
-      - "1433:1433"
+      - "14333:1433"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'TravelWeb@2026!' -C -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'TravelWeb@2026!' -Q 'SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 15s
+    restart: unless-stopped
 
-  # 2. Container Ung dung Web ASP.NET Core
   travelweb:
+    image: travelweb:latest
+    container_name: travelweb-app
     build:
       context: ./TravelWeb
       dockerfile: Dockerfile
-    container_name: travelweb_app
-    ports:
-      - "5230:5230"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QuanLyDuLichDB;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;MultipleActiveResultSets=true
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=dulich_erd_db;User Id=sa;Password=TravelWeb@2026!;TrustServerCertificate=True;MultipleActiveResultSets=true
+    ports:
+      - "5000:8080"
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  sqlserver_data:
+  sql_data:

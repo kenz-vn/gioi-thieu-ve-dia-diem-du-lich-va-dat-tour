@@ -73,6 +73,10 @@
                         <div class="card-body">
                             <h5 class="card-title text-primary fw-bold">@tour.TenDichVu</h5>
                             <p class="card-text text-muted mb-1"><i class="bi bi-geo-alt"></i> @(tour.DiaDiem?.TenDiaDiem ?? "Địa điểm du lịch")</p>
+                            @if (!string.IsNullOrEmpty(tour.DiemBatDau) || !string.IsNullOrEmpty(tour.DiemKetThuc))
+                            {
+                                <p class="card-text small text-primary mb-1"><i class="bi bi-signpost-split"></i> @(tour.DiemBatDau ?? "Khởi hành") &rarr; @(tour.DiemKetThuc ?? tour.DiaDiem?.TenDiaDiem)</p>
+                            }
                             <p class="card-text small text-secondary mb-2"><i class="bi bi-clock"></i> @(tour.ThoiLuong ?? "3 ngày 2 đêm")</p>
                             
                             @if (tour.GiaKhuyenMai.HasValue && tour.GiaKhuyenMai.Value > 0)
@@ -85,6 +89,10 @@
                             else
                             {
                                 <p class="card-text fw-bold text-danger fs-5 mb-0">@tour.GiaTien.ToString("N0") VNĐ</p>
+                            }
+                            @if (tour.GiaTreEm.HasValue && tour.GiaTreEm.Value > 0)
+                            {
+                                <div class="small text-success"><i class="bi bi-person-heart"></i> Vé trẻ em: @tour.GiaTreEm.Value.ToString("N0") VNĐ</div>
                             }
                         </div>
                         <div class="card-footer bg-white border-top-0 pt-0">

@@ -5,25 +5,32 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-10">
+    <div class="col-lg-11">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h3 class="fw-bold text-success mb-1"><i class="bi bi-plus-circle-fill"></i> Thêm Mới Tour Du Lịch</h3>
-                <span class="badge bg-success">Task DL-13: Backend Tour, Lịch Trình, Số Chỗ & Khuyến Mãi (Kiên)</span>
+                <span class="badge bg-success">Hệ thống tạo tour theo chặng, nơi bắt đầu/kết thúc & tự động nhân 15% lợi nhuận</span>
             </div>
             <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
         </div>
 
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <form id="formCreateTour" asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                    <div class="row g-3">
-                        <!-- Tên Tour & Địa Điểm -->
+                    <!-- Input ẩn lưu chuỗi JSON các chặng -->
+                    <input type="hidden" asp-for="ThongTinChang" id="inputThongTinChang" />
+
+                    <!-- PHẦN 1: THÔNG TIN CƠ BẢN CỦA TOUR -->
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                        <i class="bi bi-info-circle-fill"></i> 1. Thông Tin Cơ Bản & Lộ Trình Tour
+                    </h5>
+
+                    <div class="row g-3 mb-4">
                         <div class="col-md-8">
                             <label asp-for="TenDichVu" class="form-label fw-bold"></label> <span class="text-danger">*</span>
-                            <input asp-for="TenDichVu" class="form-control" placeholder="Ví dụ: Tour Đà Nẵng - Bà Nà Hills 3N2Đ..." />
+                            <input asp-for="TenDichVu" class="form-control" placeholder="Ví dụ: Tour Đà Nẵng - Bà Nà Hills - Cầu Vàng 3N2Đ..." required />
                             <span asp-validation-for="TenDichVu" class="text-danger small"></span>
                         </div>
 
@@ -35,35 +42,31 @@
                             <span asp-validation-for="MaDiaDiem" class="text-danger small"></span>
                         </div>
 
-                        <!-- Giá gốc, Khuyến mãi & Tỷ lệ cọc -->
-                        <div class="col-md-4">
-                            <label asp-for="GiaTien" class="form-label fw-bold"></label> <span class="text-danger">*</span>
-                            <div class="input-group">
-                                <input asp-for="GiaTien" class="form-control" type="number" step="10000" min="0" />
-                                <span class="input-group-text">VNĐ</span>
-                            </div>
-                            <span asp-validation-for="GiaTien" class="text-danger small"></span>
+                        <!-- ĐIỂM BẮT ĐẦU VÀ KẾT THÚC DO ADMIN TỰ ĐIỀN -->
+                        <div class="col-md-6">
+                            <label asp-for="DiemBatDau" class="form-label fw-bold text-dark">
+                                <i class="bi bi-pin-map-fill text-success"></i> Nơi bắt đầu / Điểm khởi hành: <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="DiemBatDau" class="form-control" placeholder="Ví dụ: Hà Nội (Sân bay Nội Bài) hoặc TP.HCM..." required />
+                            <div class="form-text small">Admin tự nhập địa điểm nơi bắt đầu tour.</div>
+                            <span asp-validation-for="DiemBatDau" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DiemKetThuc" class="form-label fw-bold text-dark">
+                                <i class="bi bi-flag-fill text-danger"></i> Nơi kết thúc / Điểm đến cuối cùng: <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="DiemKetThuc" class="form-control" placeholder="Ví dụ: Bà Nà Hills (Đà Nẵng) hoặc Vịnh Hạ Long..." required />
+                            <div class="form-text small">Admin tự nhập địa điểm kết thúc chuyến đi.</div>
+                            <span asp-validation-for="DiemKetThuc" class="text-danger small"></span>
                         </div>
 
                         <div class="col-md-4">
-                            <label asp-for="GiaKhuyenMai" class="form-label fw-bold text-danger">Giá khuyến mãi (nếu có)</label>
-                            <div class="input-group">
-                                <input asp-for="GiaKhuyenMai" class="form-control" type="number" step="10000" min="0" placeholder="Để trống nếu không giảm giá" />
-                                <span class="input-group-text text-danger fw-bold">VNĐ</span>
-                            </div>
-                            <span asp-validation-for="GiaKhuyenMai" class="text-danger small"></span>
+                            <label asp-for="ThoiLuong" class="form-label fw-bold"></label>
+                            <input asp-for="ThoiLuong" class="form-control" placeholder="Ví dụ: 3 ngày 2 đêm, 2 ngày 1 đêm..." />
+                            <span asp-validation-for="ThoiLuong" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-4">
-                            <label asp-for="TyLeCoc" class="form-label fw-bold"></label> <span class="text-danger">*</span>
-                            <div class="input-group">
-                                <input asp-for="TyLeCoc" class="form-control" type="number" min="1" max="100" />
-                                <span class="input-group-text">%</span>
-                            </div>
-                            <span asp-validation-for="TyLeCoc" class="text-danger small"></span>
-                        </div>
-
-                        <!-- Quản lý Số Chỗ (Tiêu chí bắt buộc DL-13: Chặn âm) & Thời Lượng -->
                         <div class="col-md-4">
                             <label asp-for="SoChoToiDa" class="form-label fw-bold"></label> <span class="text-danger">*</span>
                             <input asp-for="SoChoToiDa" class="form-control" type="number" min="1" />
@@ -74,16 +77,8 @@
                             <label asp-for="SoChoConLai" class="form-label fw-bold text-primary"></label> <span class="text-danger">* (Chặn âm)</span>
                             <input asp-for="SoChoConLai" class="form-control" type="number" min="0" />
                             <span asp-validation-for="SoChoConLai" class="text-danger small"></span>
-                            <div class="form-text small">Quy tắc DL-13: Số chỗ còn lại không được phép nhỏ hơn 0.</div>
                         </div>
 
-                        <div class="col-md-4">
-                            <label asp-for="ThoiLuong" class="form-label fw-bold"></label>
-                            <input asp-for="ThoiLuong" class="form-control" placeholder="Ví dụ: 3 ngày 2 đêm, 1 ngày..." />
-                            <span asp-validation-for="ThoiLuong" class="text-danger small"></span>
-                        </div>
-
-                        <!-- Trạng thái Tour -->
                         <div class="col-md-4">
                             <label asp-for="TrangThaiTour" class="form-label fw-bold"></label>
                             <select asp-for="TrangThaiTour" class="form-select">
@@ -114,20 +109,107 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Lịch Trình Chi Tiết (DL-13) -->
-                        <div class="col-12">
-                            <label asp-for="LichTrinh" class="form-label fw-bold text-success"><i class="bi bi-calendar2-week"></i> Lịch Trình Chi Tiết Tour</label>
-                            <textarea asp-for="LichTrinh" class="form-control" rows="5" placeholder="Ví dụ:&#10;Ngày 1: Đón khách tại sân bay, tham quan điểm A...&#10;Ngày 2: Khám phá điểm B, trải nghiệm hoạt động C...&#10;Ngày 3: Mua sắm đặc sản và tiễn đoàn."></textarea>
-                            <div class="form-text small">Mô tả lịch trình từng ngày để khách hàng nắm rõ lộ trình chuyến đi.</div>
-                        </div>
-
-                        <div class="col-12 mt-4 text-end">
-                            <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
-                            <button type="submit" class="btn btn-success px-4 fw-bold">
-                                <i class="bi bi-save"></i> Lưu Tour Mới
+                    <!-- PHẦN 2: CHIA THEO CHẶNG, ĂN Ở VÀ TỔNG HỢP GIÁ NHÂN 15% LỢI NHUẬN -->
+                    <div class="card border-primary bg-light mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-diagram-3-fill"></i> <strong>2. Phân Chia Các Chặng Du Lịch (Chỗ Ăn, Chỗ Ở & Giá Từng Chặng)</strong>
+                            </div>
+                            <button type="button" class="btn btn-light btn-sm fw-bold text-primary" onclick="themChangMoi()">
+                                <i class="bi bi-plus-circle"></i> Thêm Chặng
                             </button>
                         </div>
+                        <div class="card-body bg-white">
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-info-circle"></i> Admin nhập thông tin từng chặng (địa điểm, chỗ ăn, chỗ ở, giá chi phí chặng). Hệ thống sẽ tự động tổng hợp chi phí các chặng và <strong>cộng 15% lợi nhuận</strong> để tính ra Giá gốc bán cho khách hàng.
+                            </p>
+
+                            <!-- DANH SÁCH CÁC CHẶNG DYNAMIC -->
+                            <div id="danhSachChangContainer">
+                                <!-- Chặng sẽ render bằng JavaScript -->
+                            </div>
+
+                            <!-- BẢNG TỔNG HỢP GIÁ CÁC CHẶNG & 15% LỢI NHUẬN -->
+                            <div class="card bg-light border-success mt-3 p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 text-center border-end">
+                                        <span class="text-muted small d-block">Tổng chi phí các chặng:</span>
+                                        <strong id="lblTongChiPhiChang" class="fs-5 text-dark">0 VNĐ</strong>
+                                    </div>
+                                    <div class="col-md-4 text-center border-end">
+                                        <span class="text-muted small d-block">Lợi nhuận công ty (15%):</span>
+                                        <strong id="lblLoiNhuan15" class="fs-5 text-success">+0 VNĐ</strong>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <span class="text-muted small d-block fw-bold text-primary">Giá bán niêm yết (Chi phí + 15%):</span>
+                                        <strong id="lblGiaTongHop" class="fs-4 text-danger">0 VNĐ</strong>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-success fw-bold" onclick="apDungGiaTuChang()">
+                                        <i class="bi bi-check2-circle"></i> Áp dụng giá này vào ô Giá Niêm Yết Tour bên dưới
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PHẦN 3: GIÁ VÉ NGƯỜI LỚN, TRẺ EM & CỌC -->
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                        <i class="bi bi-cash-coin"></i> 3. Giá Vé Người Lớn, Trẻ Em & Đặt Cọc
+                    </h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label asp-for="GiaTien" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <div class="input-group">
+                                <input asp-for="GiaTien" id="inputGiaTien" class="form-control fw-bold text-danger" type="number" step="any" min="0" oninput="tinhGiaTreEmTuDong()" required />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="GiaTien" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="GiaTreEm" class="form-label fw-bold text-success">Giá vé trẻ em (&lt;12t)</label>
+                            <div class="input-group">
+                                <input asp-for="GiaTreEm" id="inputGiaTreEm" class="form-control text-success fw-bold" type="number" step="any" min="0" placeholder="Tự động tính nếu trống" />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <div class="form-text small">Nếu để trống, mặc định 60% giá người lớn.</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="GiaKhuyenMai" class="form-label fw-bold text-danger">Giá khuyến mãi (nếu có)</label>
+                            <div class="input-group">
+                                <input asp-for="GiaKhuyenMai" class="form-control" type="number" step="any" min="0" placeholder="Để trống nếu không giảm giá" />
+                                <span class="input-group-text text-danger fw-bold">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="GiaKhuyenMai" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="TyLeCoc" class="form-label fw-bold"></label> <span class="text-danger">*</span>
+                            <div class="input-group">
+                                <input asp-for="TyLeCoc" class="form-control" type="number" min="1" max="100" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="TyLeCoc" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Lịch Trình Chi Tiết -->
+                    <div class="mb-4">
+                        <label asp-for="LichTrinh" class="form-label fw-bold text-success"><i class="bi bi-calendar2-week"></i> Lịch Trình Chi Tiết Tour</label>
+                        <textarea asp-for="LichTrinh" id="inputLichTrinh" class="form-control" rows="5" placeholder="Ví dụ:&#10;Ngày 1: Đón khách tại điểm hẹn, khởi hành tham quan chặng 1...&#10;Ngày 2: Chinh phục chặng 2, trải nghiệm ẩm thực đặc sắc...&#10;Ngày 3: Mua sắm đặc sản và kết thúc tour."></textarea>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <a asp-action="Index" class="btn btn-secondary me-2">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-success px-4 fw-bold">
+                            <i class="bi bi-save"></i> Lưu Tour Mới
+                        </button>
                     </div>
                 </form>
             </div>
@@ -137,4 +219,122 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        let danhSachChang = [
+            { ThuTu: 1, TenChang: "Chặng 1: Điểm đón - Chặng đầu tiên", ChoAn: "Nhà hàng đặc sản địa phương", ChoO: "Khách sạn 4 sao trung tâm", GiaTien: 1200000 },
+            { ThuTu: 2, TenChang: "Chặng 2: Tham quan trải nghiệm chính", ChoAn: "Buffet ẩm thực cao cấp", ChoO: "Resort nghỉ dưỡng / Khách sạn", GiaTien: 1500000 }
+        ];
+
+        function renderDanhSachChang() {
+            const container = document.getElementById("danhSachChangContainer");
+            container.innerHTML = "";
+
+            danhSachChang.forEach((chang, idx) => {
+                const card = document.createElement("div");
+                card.className = "card border mb-3 p-3 rounded shadow-sm bg-white";
+                card.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-geo-alt-fill"></i> Chặng ${idx + 1}</h6>
+                        ${danhSachChang.length > 1 ? `<button type="button" class="btn btn-outline-danger btn-sm py-0" onclick="xoaChang(${idx})"><i class="bi bi-trash"></i> Xóa chặng</button>` : ''}
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Tên chặng / Điểm đến:</label>
+                            <input type="text" class="form-control form-control-sm" value="${chang.TenChang || ''}" onchange="capNhatChang(${idx}, 'TenChang', this.value)" placeholder="Ví dụ: Chặng 1: Hà Nội - Hạ Long" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Giá chi phí chặng (VNĐ):</label>
+                            <input type="number" class="form-control form-control-sm fw-bold text-danger" value="${chang.GiaTien || 0}" min="0" step="10000" oninput="capNhatChang(${idx}, 'GiaTien', parseFloat(this.value) || 0)" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold"><i class="bi bi-egg-fried text-warning"></i> Thông tin chỗ ăn (ẩm thực, nhà hàng):</label>
+                            <input type="text" class="form-control form-control-sm" value="${chang.ChoAn || ''}" onchange="capNhatChang(${idx}, 'ChoAn', this.value)" placeholder="Ví dụ: Nhà hàng Hải Sản Bé Mặn, Suất ăn 200k/bữa..." />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold"><i class="bi bi-house-door-fill text-success"></i> Thông tin chỗ ở (khách sạn, nơi lưu trú):</label>
+                            <input type="text" class="form-control form-control-sm" value="${chang.ChoO || ''}" onchange="capNhatChang(${idx}, 'ChoO', this.value)" placeholder="Ví dụ: Khách sạn Mường Thanh 4 sao, Phòng đôi..." />
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            tinhToanGiaTongHop();
+        }
+
+        function themChangMoi() {
+            danhSachChang.push({
+                ThuTu: danhSachChang.length + 1,
+                TenChang: `Chặng ${danhSachChang.length + 1}: Điểm tham quan tiếp theo`,
+                ChoAn: "Nhà hàng ẩm thực địa phương",
+                ChoO: "Khách sạn tiêu chuẩn",
+                GiaTien: 800000
+            });
+            renderDanhSachChang();
+        }
+
+        function xoaChang(idx) {
+            danhSachChang.splice(idx, 1);
+            danhSachChang.forEach((c, i) => c.ThuTu = i + 1);
+            renderDanhSachChang();
+        }
+
+        function capNhatChang(idx, field, val) {
+            danhSachChang[idx][field] = val;
+            if (field === 'GiaTien') {
+                tinhToanGiaTongHop();
+            }
+            luuJsonChang();
+        }
+
+        function tinhToanGiaTongHop() {
+            let tongChiPhi = 0;
+            danhSachChang.forEach(c => tongChiPhi += (parseFloat(c.GiaTien) || 0));
+
+            const loiNhuan = Math.round(tongChiPhi * 0.15);
+            const giaTongHop = Math.round(tongChiPhi * 1.15);
+
+            document.getElementById("lblTongChiPhiChang").innerText = tongChiPhi.toLocaleString('vi-VN') + " VNĐ";
+            document.getElementById("lblLoiNhuan15").innerText = "+" + loiNhuan.toLocaleString('vi-VN') + " VNĐ";
+            document.getElementById("lblGiaTongHop").innerText = giaTongHop.toLocaleString('vi-VN') + " VNĐ";
+
+            luuJsonChang();
+            return giaTongHop;
+        }
+
+        function apDungGiaTuChang() {
+            const giaTongHop = tinhToanGiaTongHop();
+            document.getElementById("inputGiaTien").value = giaTongHop;
+            tinhGiaTreEmTuDong();
+        }
+
+        function tinhGiaTreEmTuDong() {
+            const giaTien = parseFloat(document.getElementById("inputGiaTien").value) || 0;
+            const inputTreEm = document.getElementById("inputGiaTreEm");
+            if (!inputTreEm.value || parseFloat(inputTreEm.value) <= 0) {
+                inputTreEm.value = Math.round(giaTien * 0.6);
+            }
+        }
+
+        function luuJsonChang() {
+            document.getElementById("inputThongTinChang").value = JSON.stringify(danhSachChang);
+        }
+
+        document.getElementById("formCreateTour").addEventListener("submit", function() {
+            luuJsonChang();
+            const giaTienInput = document.getElementById("inputGiaTien");
+            if (!giaTienInput.value || parseFloat(giaTienInput.value) <= 0) {
+                apDungGiaTuChang();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderDanhSachChang();
+            // Khởi tạo giá niêm yết ban đầu
+            if (!document.getElementById("inputGiaTien").value || document.getElementById("inputGiaTien").value == 0) {
+                apDungGiaTuChang();
+            }
+        });
+    </script>
 }

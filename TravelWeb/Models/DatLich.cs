@@ -32,9 +32,53 @@ namespace TravelWeb.Models
         public DateTime NgayThamQuan { get; set; }
 
         [Column("so_luong_khach")]
+        [Display(Name = "Tổng số khách")]
         public int SoLuongKhach { get; set; }
 
+        [Column("so_luong_nguoi_lon")]
+        [Display(Name = "Số người lớn")]
+        public int SoLuongNguoiLon { get; set; } = 1;
+
+        [Column("so_luong_tre_em")]
+        [Display(Name = "Số trẻ em")]
+        public int SoLuongTreEm { get; set; } = 0;
+
+        [Column("ngay_check_in")]
+        [Display(Name = "Thời gian Check-in")]
+        public DateTime? NgayCheckIn { get; set; }
+
+        [Column("ngay_check_out")]
+        [Display(Name = "Thời gian Check-out")]
+        public DateTime? NgayCheckOut { get; set; }
+
+        [MaxLength(255)]
+        [Column("ten_khach_san")]
+        [Display(Name = "Khách sạn")]
+        public string? TenKhachSan { get; set; }
+
+        [MaxLength(100)]
+        [Column("loai_phong")]
+        [Display(Name = "Loại phòng / Giường")]
+        public string? LoaiPhong { get; set; }
+
+        [Column("so_luong_phong")]
+        [Display(Name = "Số phòng đặt")]
+        public int SoLuongPhong { get; set; } = 1;
+
+        [Column("gia_nguoi_lon", TypeName = "decimal(18,2)")]
+        [Display(Name = "Giá vé người lớn")]
+        public decimal GiaNguoiLon { get; set; }
+
+        [Column("gia_tre_em", TypeName = "decimal(18,2)")]
+        [Display(Name = "Giá vé trẻ em")]
+        public decimal GiaTreEm { get; set; }
+
+        [Column("tong_tien", TypeName = "decimal(18,2)")]
+        [Display(Name = "Tổng tiền tour")]
+        public decimal TongTien { get; set; }
+
         [Column("so_tien_coc", TypeName = "decimal(18,2)")]
+        [Display(Name = "Số tiền cọc")]
         public decimal SoTienCoc { get; set; }
 
         [MaxLength(20)]

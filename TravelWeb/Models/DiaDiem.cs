@@ -60,6 +60,24 @@ namespace TravelWeb.Models
         [Display(Name = "Các điểm vui chơi / Nơi cần tới")]
         public string? NoiCanToi { get; set; }
 
+        [MaxLength(255)]
+        [Column("diem_bat_dau")]
+        [Display(Name = "Điểm bắt đầu")]
+        public string? DiemBatDau { get; set; }
+
+        [MaxLength(255)]
+        [Column("diem_ket_thuc")]
+        [Display(Name = "Điểm kết thúc")]
+        public string? DiemKetThuc { get; set; }
+
+        [Column("thong_tin_chang")]
+        [Display(Name = "Thông tin các chặng")]
+        public string? ThongTinChang { get; set; }
+
+        [Column("gia_uoc_tinh", TypeName = "decimal(18,2)")]
+        [Display(Name = "Tổng giá ước tính các chặng (+15% lợi nhuận)")]
+        public decimal? GiaUocTinh { get; set; }
+
         [ForeignKey(nameof(MaDanhMuc))]
         public virtual DanhMuc? DanhMuc { get; set; }
 

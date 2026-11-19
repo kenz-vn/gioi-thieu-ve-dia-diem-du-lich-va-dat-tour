@@ -49,7 +49,20 @@ namespace TravelWeb.Controllers
         // 2. XỬ LÝ LƯU TRỮ ĐƠN ĐẶT & TẠM GIỮ CHỖ (POST) - UC-01
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> XacNhanDatTour(int maDichVu, int soLuongKhach, DateTime ngayThamQuan, string hoTen, string email, string soDienthoai)
+        public async Task<IActionResult> XacNhanDatTour(
+            int maDichVu, 
+            int? soLuongKhach,
+            int? soLuongNguoiLon,
+            int? soLuongTreEm,
+            DateTime ngayThamQuan, 
+            DateTime? ngayCheckIn,
+            DateTime? ngayCheckOut,
+            string? tenKhachSan,
+            string? loaiPhong,
+            int? soLuongPhong,
+            string hoTen, 
+            string email, 
+            string soDienthoai)
         {
             // Kiểm tra đăng nhập
             int? sessionKhId = HttpContext.Session.GetInt32("USER_ID");
@@ -62,31 +75,60 @@ namespace TravelWeb.Controllers
             var dichVu = await _context.DichVus.FindAsync(maDichVu);
             if (dichVu == null) return NotFound();
 
-            // Điểm rẽ nhánh 2: Kiểm tra ngày đi (E2)
-            if (ngayThamQuan.Date <= DateTime.Today)
+            // Tính số lượng người lớn và trẻ em
+            int nguoiLon = soLuongNguoiLon ?? (soLuongKhach ?? 1);
+            int treEm = soLuongTreEm ?? 0;
+            if (nguoiLon < 1 && treEm < 1) nguoiLon = 1;
+            int tongKhach = nguoiLon + treEm;
+
+            // Điểm rẽ nhánh 2: Kiểm tra ngày đi (E2) - Cho phép từ hôm nay trở đi
+            if (ngayThamQuan.Date < DateTime.Today)
             {
-                TempData["ErrorMessage"] = "Ngày đi không hợp lệ. Vui lòng chọn ngày khởi hành từ ngày mai trở đi.";
+                TempData["ErrorMessage"] = "Ngày đi không hợp lệ. Vui lòng chọn ngày khởi hành từ hôm nay trở đi.";
                 return RedirectToAction("DatTour", new { id = maDichVu });
             }
 
             // Điểm rẽ nhánh 3: Kiểm tra số lượng người (E3)
-            if (soLuongKhach <= 0)
+            if (tongKhach <= 0)
             {
                 TempData["ErrorMessage"] = "Số lượng người không hợp lệ. Vui lòng nhập tối thiểu 1 người.";
                 return RedirectToAction("DatTour", new { id = maDichVu });
             }
 
             // Điểm rẽ nhánh 4: Kiểm tra sức chứa (E4)
-            if (soLuongKhach > dichVu.SoChoConLai)
+            if (dichVu.SoChoConLai <= 0)
             {
-                TempData["ErrorMessage"] = $"Tour không đủ chỗ! Hiện tại chỉ còn {dichVu.SoChoConLai} chỗ khả dụng.";
+                TempData["ErrorMessage"] = "Tour hiện tại đã HẾT CHỖ! Quý khách vui lòng chọn ngày khác hoặc chọn tour khác.";
                 return RedirectToAction("DatTour", new { id = maDichVu });
             }
 
-            // Tính toán tổng tiền & tiền cọc
-            decimal giaApDung = (dichVu.GiaKhuyenMai.HasValue && dichVu.GiaKhuyenMai.Value > 0) ? dichVu.GiaKhuyenMai.Value : dichVu.GiaTien;
-            decimal tongTien = giaApDung * soLuongKhach;
-            decimal soTienCoc = tongTien * (dichVu.TyLeCoc / 100);
+            if (tongKhach > dichVu.SoChoConLai)
+            {
+                TempData["ErrorMessage"] = $"Số lượng khách ({tongKhach} người) vượt quá số chỗ trống còn lại ({dichVu.SoChoConLai} chỗ)! Vui lòng chọn lại số lượng khách cho chính xác.";
+                return RedirectToAction("DatTour", new { id = maDichVu });
+            }
+
+            // Tính toán giá vé người lớn & trẻ em
+            decimal giaNguoiLon = (dichVu.GiaKhuyenMai.HasValue && dichVu.GiaKhuyenMai.Value > 0) ? dichVu.GiaKhuyenMai.Value : dichVu.GiaTien;
+            decimal giaTreEm = (dichVu.GiaTreEm.HasValue && dichVu.GiaTreEm.Value > 0) 
+                ? dichVu.GiaTreEm.Value 
+                : Math.Round(giaNguoiLon * 0.6m, 0);
+
+            decimal tongTien = (giaNguoiLon * nguoiLon) + (giaTreEm * treEm);
+            decimal soTienCoc = Math.Round(tongTien * (dichVu.TyLeCoc / 100m), 0);
+
+            // Thời gian check-in / check-out
+            DateTime checkIn = ngayCheckIn ?? ngayThamQuan;
+            DateTime checkOut = ngayCheckOut ?? checkIn.AddDays(2);
+            if (checkOut <= checkIn)
+            {
+                checkOut = checkIn.AddDays(1);
+            }
+
+            // Khách sạn & Số phòng
+            string ks = string.IsNullOrWhiteSpace(tenKhachSan) ? "Khách sạn tiêu chuẩn du lịch" : tenKhachSan.Trim();
+            string lp = string.IsNullOrWhiteSpace(loaiPhong) ? "Phòng 2 người (Giường đôi)" : loaiPhong.Trim();
+            int phong = (soLuongPhong.HasValue && soLuongPhong.Value > 0) ? soLuongPhong.Value : Math.Max(1, (int)Math.Ceiling(tongKhach / 2.0));
 
             // Sinh mã tra cứu công khai và mã đặt lịch duy nhất
             string maTraCuu = "TOUR-" + DateTime.Now.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
@@ -98,8 +140,18 @@ namespace TravelWeb.Controllers
                 MaDatLich = maDatLich,
                 MaDichVu = maDichVu,
                 MaTraCuu = maTraCuu,
-                NgayThamQuan = ngayThamQuan,
-                SoLuongKhach = soLuongKhach,
+                NgayThamQuan = checkIn,
+                SoLuongKhach = tongKhach,
+                SoLuongNguoiLon = nguoiLon,
+                SoLuongTreEm = treEm,
+                NgayCheckIn = checkIn,
+                NgayCheckOut = checkOut,
+                TenKhachSan = ks,
+                LoaiPhong = lp,
+                SoLuongPhong = phong,
+                GiaNguoiLon = giaNguoiLon,
+                GiaTreEm = giaTreEm,
+                TongTien = tongTien,
                 SoTienCoc = soTienCoc,
                 TrangThaiDat = "CHO_XAC_NHAN",
                 ThoiGianTao = DateTime.Now,
@@ -110,7 +162,7 @@ namespace TravelWeb.Controllers
             };
 
             // Tạm giữ số chỗ (Tránh vượt quá sức chứa)
-            dichVu.SoChoConLai -= soLuongKhach;
+            dichVu.SoChoConLai = Math.Max(0, dichVu.SoChoConLai - tongKhach);
             if (dichVu.SoChoConLai == 0)
             {
                 dichVu.TrangThaiTour = "HET_CHO";

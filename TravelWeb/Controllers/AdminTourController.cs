@@ -75,12 +75,6 @@ namespace TravelWeb.Controllers
                 ModelState.AddModelError(nameof(model.SoChoConLai), "Số chỗ còn lại không thể lớn hơn số chỗ tối đa của tour!");
             }
 
-            // 3. Nghiệp vụ Khuyến mãi: Giá khuyến mãi phải nhỏ hơn hoặc bằng giá gốc
-            if (model.GiaKhuyenMai.HasValue && model.GiaKhuyenMai.Value >= model.GiaTien)
-            {
-                ModelState.AddModelError(nameof(model.GiaKhuyenMai), "Giá khuyến mãi phải nhỏ hơn giá gốc của tour!");
-            }
-
             if (fileAnh != null && fileAnh.Length > 0)
             {
                 string fileName = Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + Path.GetFileName(fileAnh.FileName);
@@ -102,6 +96,12 @@ namespace TravelWeb.Controllers
             if (model.SoChoConLai == 0 && model.TrangThaiTour == "DANG_BAN")
             {
                 model.TrangThaiTour = "HET_CHO";
+            }
+
+            // Tự động tính giá vé trẻ em nếu chưa nhập (mặc định 60% giá người lớn)
+            if (!model.GiaTreEm.HasValue || model.GiaTreEm.Value <= 0)
+            {
+                model.GiaTreEm = Math.Round(model.GiaTien * 0.6m, 0);
             }
 
             if (ModelState.IsValid)
@@ -151,11 +151,6 @@ namespace TravelWeb.Controllers
                 ModelState.AddModelError(nameof(model.SoChoConLai), "Số chỗ còn lại không thể lớn hơn số chỗ tối đa!");
             }
 
-            if (model.GiaKhuyenMai.HasValue && model.GiaKhuyenMai.Value >= model.GiaTien)
-            {
-                ModelState.AddModelError(nameof(model.GiaKhuyenMai), "Giá khuyến mãi phải nhỏ hơn giá gốc của tour!");
-            }
-
             if (fileAnh != null && fileAnh.Length > 0)
             {
                 string fileName = Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + Path.GetFileName(fileAnh.FileName);
@@ -177,6 +172,12 @@ namespace TravelWeb.Controllers
             if (model.SoChoConLai == 0 && model.TrangThaiTour == "DANG_BAN")
             {
                 model.TrangThaiTour = "HET_CHO";
+            }
+
+            // Tự động tính giá vé trẻ em nếu chưa nhập
+            if (!model.GiaTreEm.HasValue || model.GiaTreEm.Value <= 0)
+            {
+                model.GiaTreEm = Math.Round(model.GiaTien * 0.6m, 0);
             }
 
             if (ModelState.IsValid)
