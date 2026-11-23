@@ -1,0 +1,52 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 430" width="600" height="430">
+    <defs>
+        <filter id="shadow4" x="-5%" y="-5%" width="110%" height="110%">
+            <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12" />
+        </filter>
+    </defs>
+    <rect width="100%" height="100%" fill="#ffffff" />
+    <rect x="180" y="25" width="390" height="360" rx="8" ry="8" fill="#fbf7f2" stroke="#8d5b4c" stroke-width="2.2" filter="url(#shadow4)" />
+    <text x="375" y="55" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#3b2314">HỆ THỐNG WEBSITE DU LỊCH &amp; ĐẶT TOUR</text>
+
+    <!-- Connectors -->
+    <line x1="85" y1="190" x2="265" y2="105" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="190" x2="265" y2="165" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="190" x2="265" y2="225" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="190" x2="265" y2="285" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="190" x2="265" y2="345" stroke="#777777" stroke-width="1.3" />
+
+    <!-- Ellipses -->
+    <g class="usecase">
+        <ellipse cx="375" cy="105" rx="110" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="109" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Tiếp nhận &amp; đối soát đơn đặt tour</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="165" rx="110" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="169" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Xác nhận duyệt đơn đặt tour</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="225" rx="110" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="229" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Từ chối đơn &amp; hoàn kho số chỗ</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="285" rx="110" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="289" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Kiểm duyệt &amp; phản hồi đánh giá</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="345" rx="110" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="349" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Tiếp nhận &amp; xử lý liên hệ khách</text>
+    </g>
+
+    <!-- Actor: Nhan vien -->
+    <g class="actor">
+        <circle cx="85" cy="150" r="14" fill="#ffffff" stroke="#222222" stroke-width="2.3" />
+        <line x1="85" y1="164" x2="85" y2="210" stroke="#222222" stroke-width="2.3" />
+        <line x1="60" y1="180" x2="110" y2="180" stroke="#222222" stroke-width="2.3" />
+        <line x1="85" y1="210" x2="65" y2="245" stroke="#222222" stroke-width="2.3" />
+        <line x1="85" y1="210" x2="105" y2="245" stroke="#222222" stroke-width="2.3" />
+        <text x="85" y="268" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#111827">Nhân viên</text>
+        <text x="85" y="284" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10.5" fill="#4b5563">(Staff)</text>
+    </g>
+
+    <text x="300" y="415" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-style="italic" fill="#444444">Hình 3.4: Use Case của Nhân viên (Staff)</text>
+</svg>

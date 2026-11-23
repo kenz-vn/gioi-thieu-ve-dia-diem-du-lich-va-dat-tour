@@ -1,0 +1,57 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 510" width="600" height="510">
+    <defs>
+        <filter id="shadow5" x="-5%" y="-5%" width="110%" height="110%">
+            <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12" />
+        </filter>
+    </defs>
+    <rect width="100%" height="100%" fill="#ffffff" />
+    <rect x="180" y="25" width="390" height="440" rx="8" ry="8" fill="#fbf7f2" stroke="#8d5b4c" stroke-width="2.2" filter="url(#shadow5)" />
+    <text x="375" y="55" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#3b2314">HỆ THỐNG WEBSITE DU LỊCH &amp; ĐẶT TOUR</text>
+
+    <!-- Connectors -->
+    <line x1="85" y1="230" x2="260" y2="100" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="230" x2="260" y2="160" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="230" x2="260" y2="220" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="230" x2="260" y2="280" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="230" x2="260" y2="340" stroke="#777777" stroke-width="1.3" />
+    <line x1="85" y1="230" x2="260" y2="400" stroke="#777777" stroke-width="1.3" />
+
+    <!-- Ellipses -->
+    <g class="usecase">
+        <ellipse cx="375" cy="100" rx="115" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="104" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Quản trị danh mục &amp; khu du lịch</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="160" rx="115" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="164" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Quản trị tour, lịch trình &amp; số chỗ</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="220" rx="115" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="224" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Thiết lập chặng tour &amp; lưu trú</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="280" rx="115" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="284" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Quản lý đối tác nhà cung cấp</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="340" rx="115" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="344" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Quản lý tài khoản &amp; phân quyền</text>
+    </g>
+    <g class="usecase">
+        <ellipse cx="375" cy="400" rx="115" ry="22" fill="#faebd7" stroke="#8d5b4c" stroke-width="1.8" />
+        <text x="375" y="404" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#2b1810">Báo cáo doanh thu &amp; Xuất CSV</text>
+    </g>
+
+    <!-- Actor: Admin -->
+    <g class="actor">
+        <circle cx="85" cy="190" r="14" fill="#ffffff" stroke="#222222" stroke-width="2.3" />
+        <line x1="85" y1="204" x2="85" y2="250" stroke="#222222" stroke-width="2.3" />
+        <line x1="60" y1="220" x2="110" y2="220" stroke="#222222" stroke-width="2.3" />
+        <line x1="85" y1="250" x2="65" y2="285" stroke="#222222" stroke-width="2.3" />
+        <line x1="85" y1="250" x2="105" y2="285" stroke="#222222" stroke-width="2.3" />
+        <text x="85" y="308" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#111827">Admin</text>
+        <text x="85" y="324" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10.5" fill="#4b5563">(Quản lý chuỗi)</text>
+    </g>
+
+    <text x="300" y="495" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-style="italic" fill="#444444">Hình 3.5: Use Case của Admin quản lý hệ thống</text>
+</svg>
