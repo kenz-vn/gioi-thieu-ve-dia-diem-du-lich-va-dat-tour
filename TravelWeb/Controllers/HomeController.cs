@@ -1,3 +1,9 @@
+// =========================================================================================
+// THÀNH VIÊN PHỤ TRÁCH: NGUYỄN HỮU KHẢI (nguyenhuukhai2807-glitch)
+// NHÁNH GIT: feature/khai
+// NHIỆM VỤ ĐẢM NHẬN: US-07 (Trang chủ giới thiệu KDL, Banner slide, Danh sách tour),
+//                     Tiếp nhận và lưu trữ form gửi liên hệ tư vấn từ khách hàng
+// =========================================================================================
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;

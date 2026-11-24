@@ -1,3 +1,12 @@
+// =========================================================================================
+// THÀNH VIÊN PHỤ TRÁCH: NGUYỄN HỮU KHẢI (nguyenhuukhai2807-glitch)
+// NHÁNH GIT: feature/khai
+// NHIỆM VỤ ĐẢM NHẬN: 
+//   - US-18: Đặt tour trực tuyến, tự động tính tiền vé người lớn / trẻ em và tiền cọc (30-50%)
+//   - US-19: Tự sinh mã tra cứu công khai (TOUR-YYYYMMDD-XXXX) và tạm giữ số chỗ trống
+//   - US-03: Tra cứu tiến độ đơn qua mã công khai và xem lịch sử chuyến đi cá nhân
+//   - US-20: Hủy đơn đặt tour có điều kiện (trước ngày đi >= 2 ngày) và hoàn trả số chỗ
+// =========================================================================================
 using System;
 using System.Linq;
 using System.Threading.Tasks;
