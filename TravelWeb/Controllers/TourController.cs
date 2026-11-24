@@ -1,3 +1,9 @@
+// =========================================================================================
+// THÀNH VIÊN PHỤ TRÁCH: NGUYỄN HỮU KHẢI (nguyenhuukhai2807-glitch)
+// NHÁNH GIT: feature/khai
+// NHIỆM VỤ ĐẢM NHẬN: US-14 (Tìm kiếm và bộ lọc tour đa tiêu chí theo danh mục, từ khóa),
+//                     US-16 (Phân trang và điều hướng chi tiết tour)
+// =========================================================================================
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TravelWeb.Models;
